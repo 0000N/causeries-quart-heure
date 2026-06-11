@@ -1,8 +1,7 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/$USER/www/causeries-quart-heure/
-    - # Vider le dossier de destination (sauf vendor et data.db)
+    - export DEPLOYPATH=/home/$USER/www/causeries/
     - /bin/mkdir -p $DEPLOYPATH
     - # Copier tous les fichiers
     - /bin/cp -r * $DEPLOYPATH
