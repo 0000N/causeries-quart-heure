@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Causeries 1/4h Sécurité | Prévention</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
+input,textarea,button,select{font-family:inherit}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#1e293b}
+::-webkit-scrollbar-thumb{background:#475569;border-radius:3px}
+
+/* LOGIN */
+.login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-card{background:#1e293b;border-radius:16px;padding:40px 32px;width:100%;max-width:400px;border:1px solid #334155;box-shadow:0 25px 50px -12px rgba(0,0,0,.5)}
+.login-card h1{font-size:24px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:10px}
+.login-card .sub{color:#94a3b8;font-size:14px;margin-bottom:24px}
+.login-card .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+
+/* LAYOUT */
+.app{display:none}
+.app-header{background:linear-gradient(135deg,#0f172a,#1e293b);border-bottom:1px solid #334155;padding:14px 20px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between}
+.app-header h1{font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px}
+.app-header .user-info{display:flex;align-items:center;gap:12px}
+.app-header .user-badge{background:#1e3a5f;color:#93c5fd;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px}
+.logout-btn{background:none;border:1px solid #475569;color:#94a3b8;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:12px;transition:all .15s}
+.logout-btn:hover{background:#334155;color:#e2e8f0}
+
+/* NAV */
+.nav{display:flex;background:#1e293b;border-bottom:1px solid #334155;overflow-x:auto;padding:0 12px}
+.nav a{display:flex;align-items:center;gap:6px;padding:12px 18px;color:#94a3b8;text-decoration:none;font-size:13px;font-weight:500;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.nav a:hover{color:#e2e8f0}
+.nav a.active{color:#3b82f6;border-bottom-color:#3b82f6}
+
+/* CONTENT */
+.content{max-width:1200px;margin:0 auto;padding:20px}
+.page{display:none}
+.page.active{display:block}
+
+/* STATS CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:#1e293b;border-radius:12px;padding:18px 20px;border:1px solid #334155;transition:border-color .2s}
+.stat-card:hover{border-color:#3b82f6}
+.stat-card .stat-icon{font-size:24px;margin-bottom:6px}
+.stat-card .stat-value{font-size:28px;font-weight:700;line-height:1.1}
+.stat-card .stat-label{font-size:12px;color:#94a3b8;margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+.stat-card .stat-change{font-size:11px;margin-top:6px;padding:2px 8px;border-radius:10px;display:inline-block}
+.stat-card.blue .stat-value{color:#3b82f6}
+.stat-card.green .stat-value{color:#22c55e}
+.stat-card.yellow .stat-value{color:#eab308}
+.stat-card.red .stat-value{color:#ef4444}
+.stat-card.purple .stat-value{color:#a78bfa}
+.stat-change.up{background:rgba(34,197,94,.15);color:#22c55e}
+.stat-change.down{background:rgba(239,68,68,.15);color:#ef4444}
+
+/* CHART CONTAINER */
+.chart-container{background:#1e293b;border-radius:12px;padding:20px;border:1px solid #334155;margin-bottom:20px}
+.chart-container h3{font-size:14px;font-weight:600;margin-bottom:16px;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:160px;padding-top:10px}
+.chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end}
+.chart-bar{width:100%;max-width:40px;border-radius:4px 4px 0 0;min-height:4px;transition:height .4s ease;position:relative;cursor:pointer}
+.chart-bar:hover{opacity:.8}
+.chart-bar-value{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:10px;color:#94a3b8;font-weight:600;display:none}
+.chart-bar:hover .chart-bar-value{display:block}
+.chart-bar-label{font-size:9px;color:#64748b;margin-top:6px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:50px}
+
+/* CARDS GENERIQUES */
+.card{background:#1e293b;border-radius:12px;padding:20px;border:1px solid #334155;margin-bottom:16px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.card-title{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px}
+.card-title .badge{background:#334155;color:#94a3b8;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500}
+
+/* FORM ELEMENTS */
+.form-group{margin-bottom:14px}
+.form-group:last-child{margin-bottom:0}
+.form-label{display:block;font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.form-input,.form-select,.form-textarea{width:100%;padding:10px 13px;background:#0f172a;border:1.5px solid #334155;border-radius:8px;color:#e2e8f0;font-size:14px;transition:border-color .2s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.form-input::placeholder,.form-textarea::placeholder{color:#64748b}
+.form-textarea{resize:vertical;min-height:70px}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;cursor:pointer}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .12s;font-family:inherit;text-decoration:none}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:#3b82f6;color:white}.btn-primary:hover{background:#2563eb}
+.btn-success{background:#22c55e;color:white}.btn-success:hover{background:#16a34a}
+.btn-danger{background:#ef4444;color:white}.btn-danger:hover{background:#dc2626}
+.btn-warning{background:#eab308;color:#0f172a}.btn-warning:hover{background:#d97706}
+.btn-ghost{background:transparent;color:#94a3b8;border:1px solid #334155}.btn-ghost:hover{background:#334155;color:#e2e8f0}
+.btn-sm{padding:7px 12px;font-size:12px}
+.btn-xs{padding:4px 10px;font-size:11px}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap}
+.btn-group .btn{flex:1;min-width:0}
+
+/* TABLEAU */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{text-align:left;padding:10px 12px;color:#94a3b8;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #334155;white-space:nowrap}
+tbody td{padding:10px 12px;border-bottom:1px solid #1e293b;vertical-align:middle}
+tbody tr:hover{background:rgba(59,130,246,.04)}
+tbody tr:last-child td{border-bottom:none}
+
+/* STATUS BADGES */
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.status-pending{background:rgba(234,179,8,.15);color:#eab308}
+.status-validated{background:rgba(34,197,94,.15);color:#22c55e}
+.status-rejected{background:rgba(239,68,68,.15);color:#ef4444}
+.status-open{background:rgba(59,130,246,.15);color:#3b82f6}
+.status-closed{background:rgba(100,116,139,.15);color:#94a3b8}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:#1e293b;border-radius:14px;padding:0;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;border:1px solid #334155;box-shadow:0 25px 50px -12px rgba(0,0,0,.5)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid #334155;position:sticky;top:0;background:#1e293b;z-index:10}
+.modal-header h2{font-size:16px;font-weight:600}
+.modal-close{background:none;border:none;color:#94a3b8;font-size:22px;cursor:pointer;padding:4px;line-height:1}
+.modal-close:hover{color:#e2e8f0}
+.modal-body{padding:24px}
+.modal-footer{display:flex;justify-content:flex-end;gap:10px;padding:16px 24px;border-top:1px solid #334155}
+
+/* FILTERS BAR */
+.filters-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end}
+.filters-bar .form-group{margin-bottom:0;min-width:140px;flex:1}
+.filters-bar .form-group .form-input,.filters-bar .form-group .form-select{font-size:12px;padding:8px 10px}
+
+/* DETAIL MODAL */
+.detail-section{margin-bottom:16px}
+.detail-section:last-child{margin-bottom:0}
+.detail-section h4{font-size:12px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.detail-section p{font-size:14px;line-height:1.5}
+.detail-tags{display:flex;flex-wrap:wrap;gap:4px}
+.detail-tag{background:#334155;padding:3px 10px;border-radius:12px;font-size:12px;color:#cbd5e1}
+.detail-participants{display:flex;flex-wrap:wrap;gap:4px}
+.detail-participant{background:#0f172a;padding:3px 10px;border-radius:12px;font-size:12px;color:#94a3b8}
+
+/* COMMENTS */
+.comment-item{padding:12px;background:#0f172a;border-radius:8px;margin-bottom:8px}
+.comment-item:last-child{margin-bottom:0}
+.comment-item .comment-author{font-size:12px;font-weight:600;color:#93c5fd;margin-bottom:3px}
+.comment-item .comment-text{font-size:13px;color:#e2e8f0;line-height:1.4}
+.comment-item .comment-date{font-size:10px;color:#64748b;margin-top:4px}
+.comment-form{display:flex;gap:8px;margin-top:12px}
+.comment-form .form-input{flex:1}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+.content{padding:12px}
+.stats-grid{grid-template-columns:repeat(2,1fr)}
+.stat-card{padding:14px}
+.stat-card .stat-value{font-size:22px}
+.nav a{padding:10px 12px;font-size:12px}
+.filters-bar .form-group{min-width:120px}
+.form-row{grid-template-columns:1fr}
+.app-header{padding:10px 14px}
+.app-header h1{font-size:15px}
+}
+@media(max-width:480px){
+.stats-grid{grid-template-columns:1fr 1fr}
+.chart-bars{height:120px}
+}
+
+/* ANIMATIONS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page.active{animation:fadeIn .25s ease}
+.stat-card{animation:fadeIn .3s ease}
+.modal{animation:fadeIn .2s ease}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:8px}
+.toast{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:12px 18px;font-size:13px;color:#e2e8f0;box-shadow:0 10px 25px rgba(0,0,0,.3);animation:fadeIn .2s ease;display:flex;align-items:center;gap:8px;max-width:360px}
+.toast-success{border-left:3px solid #22c55e}
+.toast-error{border-left:3px solid #ef4444}
+.toast-info{border-left:3px solid #3b82f6}
+
+/* LOADING */
+.loading{display:flex;align-items:center;justify-content:center;padding:40px;color:#64748b;font-size:14px}
+.spinner{width:20px;height:20px;border:2px solid #334155;border-top-color:#3b82f6;border-radius:50%;animation:spin .6s linear infinite;margin-right:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:40px 20px;color:#64748b}
+.empty-state .empty-icon{font-size:40px;margin-bottom:12px}
+.empty-state h3{font-size:16px;color:#94a3b8;margin-bottom:6px}
+.empty-state p{font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div class="logo-icon">🛡️</div>
+      <div>
+        <h1>Prévention</h1>
+        <div style="color:#94a3b8;font-size:13px">Service Prévention Sécurité</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email professionnel</label>
+      <input class="form-input" id="loginEmail" type="email" placeholder="prenom.nom@entreprise.com" autocomplete="email" autofocus>
+    </div>
+    <button class="btn btn-primary" id="loginBtn" style="width:100%;margin-top:4px">
+      Accéder au Dashboard
+    </button>
+    <div id="loginError" style="color:#ef4444;font-size:12px;margin-top:10px;display:none"></div>
+  </div>
+</div>
+
+<!-- ===== APPLICATION ===== -->
+<div class="app" id="app">
+
+  <!-- HEADER -->
+  <div class="app-header">
+    <h1>🛡️ Prévention</h1>
+    <div class="user-info">
+      <span class="user-badge" id="userBadge">👤 prevention@</span>
+      <button class="logout-btn" onclick="logout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <nav class="nav" id="mainNav">
+    <a href="#" data-page="dashboard" class="active">📊 Dashboard</a>
+    <a href="#" data-page="causeries">📋 Causeries</a>
+    <a href="#" data-page="plans">✅ Plans d'action</a>
+    <a href="#" data-page="stats">📈 Statistiques</a>
+    <a href="#" data-page="improvements">💡 Améliorations <span class="badge" id="impBadge" style="display:none">0</span></a>
+  </nav>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ===== DASHBOARD PAGE ===== -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid" id="mainStats">
+        <div class="stat-card blue">
+          <div class="stat-icon">📝</div>
+          <div class="stat-value" id="statTotal">-</div>
+          <div class="stat-label">Causeries totales</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value" id="statValidees">-</div>
+          <div class="stat-label">Validées</div>
+        </div>
+        <div class="stat-card yellow">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-value" id="statEnAttente">-</div>
+          <div class="stat-label">En attente</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-icon">❌</div>
+          <div class="stat-value" id="statRejetees">-</div>
+          <div class="stat-label">Rejetées</div>
+        </div>
+        <div class="stat-card purple">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-value" id="statPlans">-</div>
+          <div class="stat-label">Plans d'action ouverts</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-icon">👥</div>
+          <div class="stat-value" id="statAnimateurs">-</div>
+          <div class="stat-label">Animateurs actifs</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px">
+        <div class="chart-container">
+          <h3>📊 Évolution mensuelle</h3>
+          <div class="chart-bars" id="monthlyChart"></div>
+        </div>
+        <div class="chart-container">
+          <h3>🏆 Thèmes les plus fréquents</h3>
+          <div id="topThemes"></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+        <div class="card">
+          <div class="card-header"><div class="card-title">📊 Par statut</div></div>
+          <div id="statutChart"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">🏗️ Par chantier (top 5)</div></div>
+          <div id="chantierChart"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CAUSERIES PAGE ===== -->
+    <div class="page" id="page-causeries">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📋 Toutes les causeries <span class="badge" id="causeriesCount">0</span></div>
+        </div>
+
+        <div class="filters-bar">
+          <div class="form-group">
+            <label class="form-label">Statut</label>
+            <select class="form-select" id="filterStatus" onchange="loadCauseries()">
+              <option value="all">Tous</option>
+              <option value="pending">En attente</option>
+              <option value="validated">Validées</option>
+              <option value="rejected">Rejetées</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Animateur</label>
+            <select class="form-select" id="filterAnimateur" onchange="loadCauseries()">
+              <option value="">Tous</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Chantier</label>
+            <select class="form-select" id="filterChantier" onchange="loadCauseries()">
+              <option value="">Tous</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Animateur</th>
+                <th>Chantier</th>
+                <th>Thèmes</th>
+                <th>Participants</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="causeriesTableBody">
+              <tr><td colspan="7"><div class="loading"><div class="spinner"></div> Chargement...</div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PLANS D'ACTION PAGE ===== -->
+    <div class="page" id="page-plans">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">✅ Plans d'action <span class="badge" id="plansCount">0</span></div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('planModal')">+ Nouveau plan</button>
+        </div>
+
+        <div class="filters-bar">
+          <div class="form-group">
+            <label class="form-label">Statut</label>
+            <select class="form-select" id="planFilterStatus" onchange="loadPlans()">
+              <option value="all">Tous</option>
+              <option value="open">Ouvert</option>
+              <option value="closed">Fermé</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Titre</th>
+                <th>Chantier</th>
+                <th>Assigné à</th>
+                <th>Priorité</th>
+                <th>Échéance</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="plansTableBody">
+              <tr><td colspan="7"><div class="loading"><div class="spinner"></div> Chargement...</div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== STATS PAGE ===== -->
+    <div class="page" id="page-stats">
+      <div class="stats-grid">
+        <div class="stat-card blue"><div class="stat-icon">📝</div><div class="stat-value" id="statsTotal">-</div><div class="stat-label">Causeries totales</div></div>
+        <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-value" id="statsValidees">-</div><div class="stat-label">Validées ce mois</div></div>
+        <div class="stat-card yellow"><div class="stat-icon">⏳</div><div class="stat-value" id="statsEnAttente">-</div><div class="stat-label">En attente</div></div>
+        <div class="stat-card purple"><div class="stat-icon">🎯</div><div class="stat-value" id="statsPlansTotal">-</div><div class="stat-label">Plans d'action</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card">
+          <div class="card-header"><div class="card-title">👥 Par animateur</div></div>
+          <div id="animateurDetail"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">🏗️ Par chantier</div></div>
+          <div id="chantierDetail"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== AMÉLIORATIONS PAGE ===== -->
+    <div class="page" id="page-improvements">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">💡 Demandes d'amélioration <span class="badge" id="impCount">0</span></div>
+        </div>
+        <div class="dashboard-header" style="margin-bottom:16px">
+          <div class="header-content" style="padding:16px 0">
+            <p style="color:#94a3b8;font-size:14px">Les animateurs proposent des améliorations — validez ou refusez avec un commentaire</p>
+          </div>
+        </div>
+        <div id="improvements-container"></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /app -->
+
+<!-- ===== MODAL: Validation ===== -->
+<div class="modal-overlay" id="validateModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="validateModalTitle">Valider la causerie</h2>
+      <button class="modal-close" onclick="closeModal('validateModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Notes (optionnel)</label>
+        <textarea class="form-textarea" id="validateNotes" placeholder="Commentaire sur cette décision..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('validateModal')">Annuler</button>
+      <button class="btn btn-success" id="confirmValidateBtn" onclick="confirmValidate()">✅ Valider</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: Détail Causerie ===== -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header">
+      <h2>📋 Détail de la causerie</h2>
+      <button class="modal-close" onclick="closeModal('detailModal')">&times;</button>
+    </div>
+    <div class="modal-body" id="detailBody">
+      <div class="loading"><div class="spinner"></div> Chargement...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: Plan d'action ===== -->
+<div class="modal-overlay" id="planModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="planModalTitle">Nouveau plan d'action</h2>
+      <button class="modal-close" onclick="closeModal('planModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="planId">
+      <div class="form-group">
+        <label class="form-label">Titre *</label>
+        <input class="form-input" id="planTitle" placeholder="Titre du plan d'action">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-textarea" id="planDescription" placeholder="Description détaillée..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Assigné à</label>
+          <input class="form-input" id="planAssignedTo" placeholder="Email de la personne">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Échéance</label>
+          <input class="form-input" id="planDueDate" type="date">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Priorité</label>
+          <select class="form-select" id="planPriority">
+            <option value="low">Basse</option>
+            <option value="normal" selected>Normale</option>
+            <option value="high">Haute</option>
+            <option value="critical">Critique</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">ID Causerie (lié à)</label>
+          <input class="form-input" id="planCauserieId" placeholder="Optionnel">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('planModal')">Annuler</button>
+      <button class="btn btn-primary" id="savePlanBtn" onclick="savePlan()">💾 Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: Commentaires ===== -->
+<div class="modal-overlay" id="commentsModal">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <h2>💬 Commentaires</h2>
+      <button class="modal-close" onclick="closeModal('commentsModal')">&times;</button>
+    </div>
+    <div class="modal-body" id="commentsBody">
+      <div id="commentsList"></div>
+      <div class="comment-form">
+        <input class="form-input" id="commentInput" placeholder="Ajouter un commentaire...">
+        <button class="btn btn-primary btn-sm" onclick="addComment()">Envoyer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ===== STATE =====
+let userEmail = '';
+let currentValidateId = null;
+let currentValidateAction = 'validate';
+let currentPlanId = null;
+
+// ===== LOGIN =====
+document.getElementById('loginBtn').addEventListener('click', doLogin);
+document.getElementById('loginEmail').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') doLogin();
+});
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
+  if (!email || !email.includes('@')) {
+    errEl.textContent = 'Veuillez entrer un email valide';
+    errEl.style.display = 'block';
+    return;
+  }
+  document.getElementById('loginBtn').textContent = 'Connexion...';
+  document.getElementById('loginBtn').disabled = true;
+  try {
+    const resp = await fetch('/api/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email})
+    });
+    const data = await resp.json();
+    if (!data.ok) {
+      errEl.textContent = data.error || 'Accès refusé. Compte prevention requis.';
+      errEl.style.display = 'block';
+      document.getElementById('loginBtn').textContent = 'Accéder au Dashboard';
+      document.getElementById('loginBtn').disabled = false;
+      return;
+    }
+    userEmail = data.email;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('userBadge').innerHTML = '👤 ' + userEmail.split('@')[0];
+    initApp();
+  } catch(e) {
+    errEl.textContent = 'Erreur de connexion au serveur';
+    errEl.style.display = 'block';
+    document.getElementById('loginBtn').textContent = 'Accéder au Dashboard';
+    document.getElementById('loginBtn').disabled = false;
+  }
+}
+
+function logout() {
+  userEmail = '';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginBtn').textContent = 'Accéder au Dashboard';
+  document.getElementById('loginBtn').disabled = false;
+}
+
+// ===== NAVIGATION =====
+document.querySelectorAll('.nav a').forEach(a => {
+  a.addEventListener('click', function(e) {
+    e.preventDefault();
+    document.querySelectorAll('.nav a').forEach(x => x.classList.remove('active'));
+    this.classList.add('active');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const page = this.dataset.page;
+    document.getElementById('page-' + page).classList.add('active');
+    if (page === 'dashboard') loadStats();
+    else if (page === 'causeries') { loadFilters(); loadCauseries(); }
+    else if (page === 'plans') loadPlans();
+    else if (page === 'stats') loadStatsPage();
+    else if (page === 'improvements') loadImprovementsList();
+  });
+});
+
+// ===== TOAST =====
+function toast(msg, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const el = document.createElement('div');
+  el.className = 'toast toast-' + type;
+  el.textContent = msg;
+  container.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(() => el.remove(), 300); }, 3000);
+}
+
+// ===== MODALS =====
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+});
+
+// ===== INIT =====
+async function initApp() {
+  await loadStats();
+}
+
+// ===== STATS =====
+async function loadStats() {
+  try {
+    const resp = await fetch('/api/stats?email=' + encodeURIComponent(userEmail));
+    const data = await resp.json();
+    if (!data.ok) return;
+    document.getElementById('statTotal').textContent = data.total;
+    document.getElementById('statValidees').textContent = data.validees;
+    document.getElementById('statEnAttente').textContent = data.en_attente;
+    document.getElementById('statRejetees').textContent = data.rejetees;
+    document.getElementById('statPlans').textContent = data.plans_ouverts;
+    document.getElementById('statAnimateurs').textContent = data.animateurs_uniques;
+    renderMonthlyChart(data.monthly || []);
+    renderTopThemes();
+    renderStatutChart(data.par_statut || []);
+    renderChantierChart(data.par_chantier || []);
+    // Charger le badge améliorations
+    try {
+      var bcR = await fetch('/api/improvements/pending-count?email=' + encodeURIComponent(userEmail));
+      var bc = await bcR.json();
+      if (bc.ok) {
+        var badge = document.getElementById('impBadge');
+        if (badge) {
+          if (bc.pending > 0) { badge.textContent = bc.pending; badge.style.display = 'inline'; }
+          else badge.style.display = 'none';
+        }
+      }
+    } catch(e) {}
+  } catch(e) { console.error(e); }
+}
+
+function renderMonthlyChart(monthly) {
+  const container = document.getElementById('monthlyChart');
+  if (!monthly.length) { container.innerHTML = '<div style="color:#64748b;padding:40px;text-align:center">Aucune donnée</div>'; return; }
+  const maxVal = Math.max(...monthly.map(m => m.count), 1);
+  container.innerHTML = monthly.map(m => {
+    const h = Math.max(4, (m.count / maxVal) * 140);
+    const label = m.mois ? m.mois.slice(5) : '';
+    return `<div class="chart-bar-wrap">
+      <div class="chart-bar" style="height:${h}px;background:linear-gradient(to top,#3b82f6,#60a5fa)">
+        <div class="chart-bar-value">${m.count}</div>
+      </div>
+      <div class="chart-bar-label">${label}</div>
+    </div>`;
+  }).join('');
+}
+
+async function renderTopThemes() {
+  const container = document.getElementById('topThemes');
+  container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const resp = await fetch('/api/suggestions?email=' + encodeURIComponent(userEmail));
+    const data = await resp.json();
+    if (!data.ok || !data.top_themes || !data.top_themes.length) {
+      container.innerHTML = '<div style="color:#64748b;padding:20px;text-align:center;font-size:13px">Aucun thème récurrent</div>';
+      return;
+    }
+    const maxC = Math.max(...data.top_themes.map(t => t.count), 1);
+    container.innerHTML = data.top_themes.map(t => {
+      const pct = (t.count / maxC) * 100;
+      return `<div style="margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+          <span style="color:#cbd5e1">${t.theme}</span>
+          <span style="color:#94a3b8">${t.count}</span>
+        </div>
+        <div style="background:#0f172a;border-radius:4px;height:6px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#3b82f6,#8b5cf6);border-radius:4px;transition:width .4s"></div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { container.innerHTML = '<div style="color:#64748b;padding:20px;text-align:center">Erreur</div>'; }
+}
+
+function renderStatutChart(statuts) {
+  const container = document.getElementById('statutChart');
+  const colors = {pending:'#eab308', validated:'#22c55e', rejected:'#ef4444'};
+  const labels = {pending:'En attente', validated:'Validées', rejected:'Rejetées'};
+  const total = statuts.reduce((s, r) => s + r.count, 0) || 1;
+  container.innerHTML = statuts.map(r => {
+    const pct = (r.count / total) * 100;
+    const color = colors[r.status] || '#3b82f6';
+    const label = labels[r.status] || r.status;
+    return `<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+        <span style="color:#cbd5e1">${label}</span>
+        <span style="color:#94a3b8">${r.count}</span>
+      </div>
+      <div style="background:#0f172a;border-radius:4px;height:8px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:${color};border-radius:4px;transition:width .4s"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderChantierChart(chantiers) {
+  const container = document.getElementById('chantierChart');
+  if (!chantiers.length) { container.innerHTML = '<div style="color:#64748b;padding:20px;text-align:center;font-size:13px">Aucune donnée</div>'; return; }
+  const top5 = chantiers.slice(0, 5);
+  const maxC = Math.max(...top5.map(r => r.count), 1);
+  container.innerHTML = top5.map(r => {
+    const pct = (r.count / maxC) * 100;
+    return `<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+        <span style="color:#cbd5e1">${r.chantier}</span>
+        <span style="color:#94a3b8">${r.count}</span>
+      </div>
+      <div style="background:#0f172a;border-radius:4px;height:6px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#22c55e,#16a34a);border-radius:4px;transition:width .4s"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===== CAUSERIES =====
+async function loadFilters() {
+  try {
+    const [respA, respC] = await Promise.all([
+      fetch('/api/animateurs?email=' + encodeURIComponent(userEmail)),
+      fetch('/api/chantiers?email=' + encodeURIComponent(userEmail))
+    ]);
+    const dataA = await respA.json();
+    const dataC = await respC.json();
+    const selA = document.getElementById('filterAnimateur');
+    const selC = document.getElementById('filterChantier');
+    selA.innerHTML = '<option value="">Tous</option>' + (dataA.animateurs || []).map(e => `<option value="${e}">${e}</option>`).join('');
+    selC.innerHTML = '<option value="">Tous</option>' + (dataC.chantiers || []).map(c => `<option value="${c}">${c}</option>`).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function loadCauseries() {
+  const tbody = document.getElementById('causeriesTableBody');
+  tbody.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div> Chargement...</div></td></tr>';
+  const status = document.getElementById('filterStatus').value;
+  const animateur = document.getElementById('filterAnimateur').value;
+  const chantier = document.getElementById('filterChantier').value;
+  const params = new URLSearchParams({email: userEmail});
+  if (status && status !== 'all') params.set('status', status);
+  if (animateur) params.set('animateur', animateur);
+  if (chantier) params.set('chantier', chantier);
+  try {
+    const resp = await fetch('/api/causeries?' + params.toString());
+    const data = await resp.json();
+    if (!data.ok) { tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state">Erreur</div></td></tr>'; return; }
+    document.getElementById('causeriesCount').textContent = data.total;
+    if (!data.causeries || !data.causeries.length) {
+      tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><h3>Aucune causerie</h3><p>Aucune causerie trouvée avec ces filtres</p></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.causeries.map(c => {
+      const statusClass = 'status-' + (c.status || 'pending');
+      const statusLabel = {pending:'En attente', validated:'Validée', rejected:'Rejetée'}[c.status] || 'En attente';
+      const themes = (c.themes || []).slice(0, 2).join(', ') + ((c.themes || []).length > 2 ? '...' : '');
+      const noms = (c.participants || []).map(p => typeof p === 'string' ? p : p.name).join(', ');
+      return `<tr>
+        <td style="white-space:nowrap;font-size:12px">${c.date_label || c.date_iso?.slice(0,10) || '-'}</td>
+        <td><strong>${c.animateur || c.email?.split('@')[0]}</strong><br><span style="font-size:11px;color:#64748b">${c.email}</span></td>
+        <td>${c.chantier}</td>
+        <td><span style="font-size:12px">${themes || '-'}</span></td>
+        <td><span style="font-size:12px">${(c.participants || []).length}</span></td>
+        <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+        <td>
+          <div class="btn-group" style="gap:4px;flex-wrap:nowrap">
+            <button class="btn btn-xs btn-ghost" onclick="showDetail('${c.id}')" title="Détail">👁️</button>
+            ${c.status !== 'validated' ? `<button class="btn btn-xs btn-success" onclick="openValidate('${c.id}','validate')" title="Valider">✅</button>` : ''}
+            ${c.status !== 'rejected' ? `<button class="btn btn-xs btn-danger" onclick="openValidate('${c.id}','reject')" title="Rejeter">❌</button>` : ''}
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state">Erreur de chargement</div></td></tr>';
+  }
+}
+
+// ===== VALIDATION =====
+function openValidate(id, action) {
+  currentValidateId = id;
+  currentValidateAction = action;
+  document.getElementById('validateModalTitle').textContent = action === 'validate' ? '✅ Valider la causerie' : '❌ Rejeter la causerie';
+  document.getElementById('validateNotes').value = '';
+  document.getElementById('confirmValidateBtn').textContent = action === 'validate' ? '✅ Valider' : '❌ Rejeter';
+  document.getElementById('confirmValidateBtn').className = action === 'validate' ? 'btn btn-success' : 'btn btn-danger';
+  openModal('validateModal');
+}
+
+async function confirmValidate() {
+  const notes = document.getElementById('validateNotes').value;
+  try {
+    const resp = await fetch('/api/causeries/' + currentValidateId + '/validate', {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email: userEmail, action: currentValidateAction, notes})
+    });
+    const data = await resp.json();
+    if (!data.ok) { toast(data.error || 'Erreur', 'error'); return; }
+    toast(currentValidateAction === 'validate' ? '✅ Causerie validée avec succès' : '❌ Causerie rejetée', 'success');
+    closeModal('validateModal');
+    loadCauseries();
+    loadStats();
+  } catch(e) { toast('Erreur réseau', 'error'); }
+}
+
+// ===== DETAIL CAUSERIE =====
+async function showDetail(id) {
+  openModal('detailModal');
+  document.getElementById('detailBody').innerHTML = '<div class="loading"><div class="spinner"></div> Chargement...</div>';
+  try {
+    const resp = await fetch('/api/causeries/' + id + '?email=' + encodeURIComponent(userEmail));
+    const data = await resp.json();
+    if (!data.ok || !data.causerie) { document.getElementById('detailBody').innerHTML = '<div class="empty-state">Erreur</div>'; return; }
+    const c = data.causerie;
+    const themes = (c.themes || []).map(t => `<span class="detail-tag">${t}</span>`).join('');
+    const participants = (c.participants || []).map(p => `<span class="detail-participant">${typeof p === 'string' ? p : p.name}</span>`).join('');
+    const statusLabel = {pending:'En attente', validated:'Validée', rejected:'Rejetée'}[c.status] || 'En attente';
+    const statusClass = 'status-' + (c.status || 'pending');
+    const plans = (c.plans || []).map(p => `<div style="padding:8px 12px;background:#0f172a;border-radius:6px;margin-bottom:4px;font-size:13px">📌 ${p.title} <span class="status-badge status-${p.status}">${p.status}</span></div>`).join('') || '<span style="color:#64748b;font-size:13px">Aucun plan d\'action lié</span>';
+    document.getElementById('detailBody').innerHTML = `
+      <div class="detail-section">
+        <h4>Informations</h4>
+        <p><strong>Animateur :</strong> ${c.email}</p>
+        <p><strong>Chantier :</strong> ${c.chantier}</p>
+        <p><strong>Date :</strong> ${c.date_label || c.date_iso?.slice(0,10) || '-'}</p>
+        <p><strong>Statut :</strong> <span class="status-badge ${statusClass}">${statusLabel}</span></p>
+        ${c.validated_by ? `<p><strong>Validé par :</strong> ${c.validated_by} ${c.validated_at ? 'le ' + c.validated_at.slice(0,10) : ''}</p>` : ''}
+        ${c.validated_notes ? `<p><strong>Notes :</strong> ${c.validated_notes}</p>` : ''}
+      </div>
+      <div class="detail-section">
+        <h4>Thèmes</h4>
+        <div class="detail-tags">${themes || '<span style="color:#64748b">Aucun</span>'}</div>
+      </div>
+      <div class="detail-section">
+        <h4>Participants (${(c.participants || []).length})</h4>
+        <div class="detail-participants">${participants || '<span style="color:#64748b">Aucun</span>'}</div>
+      </div>
+      ${c.notes ? `<div class="detail-section"><h4>Notes</h4><p>${c.notes}</p></div>` : ''}
+      <div class="detail-section" style="border-top:1px solid #334155;padding-top:16px">
+        <h4>Plans d'action liés</h4>
+        ${plans}
+      </div>
+      <div style="margin-top:16px;display:flex;gap:8px">
+        <a class="btn btn-primary btn-sm" href="/api/export/${c.id}?email=${encodeURIComponent(userEmail)}" target="_blank">📄 Exporter PDF</a>
+      </div>
+    `;
+  } catch(e) { document.getElementById('detailBody').innerHTML = '<div class="empty-state">Erreur de chargement</div>'; }
+}
+
+// ===== PLANS D'ACTION =====
+async function loadPlans() {
+  const tbody = document.getElementById('plansTableBody');
+  tbody.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div> Chargement...</div></td></tr>';
+  const status = document.getElementById('planFilterStatus').value;
+  const params = new URLSearchParams({email: userEmail});
+  if (status && status !== 'all') params.set('status', status);
+  try {
+    const resp = await fetch('/api/plans?' + params.toString());
+    const data = await resp.json();
+    if (!data.ok) { tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state">Erreur</div></td></tr>'; return; }
+    document.getElementById('plansCount').textContent = data.plans ? data.plans.length : 0;
+    if (!data.plans || !data.plans.length) {
+      tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">✅</div><h3>Aucun plan d\'action</h3><p>Créez votre premier plan d\'action</p></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.plans.map(p => {
+      const prioColors = {low:'#94a3b8', normal:'#3b82f6', high:'#eab308', critical:'#ef4444'};
+      const prioLabels = {low:'Basse', normal:'Normale', high:'Haute', critical:'Critique'};
+      return `<tr>
+        <td><strong>${p.title}</strong><br><span style="font-size:11px;color:#64748b">${p.chantier || '-'}</span></td>
+        <td>${p.chantier || '-'}</td>
+        <td>${p.assigned_to || '<span style="color:#64748b">Non assigné</span>'}</td>
+        <td><span style="color:${prioColors[p.priority] || '#94a3b8'};font-weight:600">${prioLabels[p.priority] || p.priority}</span></td>
+        <td style="font-size:12px">${p.due_date ? p.due_date.slice(0,10) : '-'}</td>
+        <td><span class="status-badge status-${p.status}">${p.status === 'open' ? 'Ouvert' : 'Fermé'}</span></td>
+        <td>
+          <div class="btn-group" style="gap:4px;flex-wrap:nowrap">
+            <button class="btn btn-xs btn-ghost" onclick="editPlan('${p.id}')" title="Modifier">✏️</button>
+            <button class="btn btn-xs btn-ghost" onclick="openComments('${p.id}')" title="Commentaires">💬</button>
+            ${p.status === 'open' ? `<button class="btn btn-xs btn-success" onclick="togglePlanStatus('${p.id}','closed')" title="Fermer">🔒</button>` : `<button class="btn btn-xs btn-warning" onclick="togglePlanStatus('${p.id}','open')" title="Réouvrir">🔓</button>`}
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  } catch(e) { tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state">Erreur de chargement</div></td></tr>'; }
+}
+
+function openNewPlan() {
+  currentPlanId = null;
+  document.getElementById('planModalTitle').textContent = 'Nouveau plan d\'action';
+  document.getElementById('planId').value = '';
+  document.getElementById('planTitle').value = '';
+  document.getElementById('planDescription').value = '';
+  document.getElementById('planAssignedTo').value = '';
+  document.getElementById('planDueDate').value = '';
+  document.getElementById('planPriority').value = 'normal';
+  document.getElementById('planCauserieId').value = '';
+  openModal('planModal');
+}
+
+async function editPlan(id) {
+  currentPlanId = id;
+  document.getElementById('planModalTitle').textContent = 'Modifier le plan d\'action';
+  try {
+    const resp = await fetch('/api/plans?email=' + encodeURIComponent(userEmail));
+    const data = await resp.json();
+    if (!data.ok || !data.plans) { toast('Erreur', 'error'); return; }
+    const plan = data.plans.find(p => p.id === id);
+    if (!plan) { toast('Plan introuvable', 'error'); return; }
+    document.getElementById('planId').value = plan.id;
+    document.getElementById('planTitle').value = plan.title;
+    document.getElementById('planDescription').value = plan.description || '';
+    document.getElementById('planAssignedTo').value = plan.assigned_to || '';
+    document.getElementById('planDueDate').value = plan.due_date ? plan.due_date.slice(0,10) : '';
+    document.getElementById('planPriority').value = plan.priority || 'normal';
+    document.getElementById('planCauserieId').value = plan.causerie_id || '';
+    openModal('planModal');
+  } catch(e) { toast('Erreur', 'error'); }
+}
+
+async function savePlan() {
+  const id = document.getElementById('planId').value;
+  const title = document.getElementById('planTitle').value.trim();
+  if (!title) { toast('Le titre est requis', 'error'); return; }
+  const body = {
+    email: userEmail,
+    title,
+    description: document.getElementById('planDescription').value,
+    assigned_to: document.getElementById('planAssignedTo').value,
+    due_date: document.getElementById('planDueDate').value,
+    priority: document.getElementById('planPriority').value,
+    causerie_id: document.getElementById('planCauserieId').value
+  };
+  try {
+    let resp;
+    if (id) {
+      resp = await fetch('/api/plans/' + id, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(body)
+      });
+    } else {
+      resp = await fetch('/api/plans', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(body)
+      });
+    }
+    const data = await resp.json();
+    if (!data.ok) { toast(data.error || 'Erreur', 'error'); return; }
+    toast(id ? '✏️ Plan mis à jour' : '✅ Plan créé', 'success');
+    closeModal('planModal');
+    loadPlans();
+  } catch(e) { toast('Erreur réseau', 'error'); }
+}
+
+async function togglePlanStatus(id, newStatus) {
+  try {
+    const resp = await fetch('/api/plans/' + id, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email: userEmail, status: newStatus})
+    });
+    const data = await resp.json();
+    if (!data.ok) { toast(data.error || 'Erreur', 'error'); return; }
+    toast(newStatus === 'closed' ? '🔒 Plan fermé' : '🔓 Plan réouvert', 'success');
+    loadPlans();
+  } catch(e) { toast('Erreur réseau', 'error'); }
+}
+
+// ===== COMMENTAIRES =====
+let currentCommentPlanId = null;
+
+async function openComments(planId) {
+  currentCommentPlanId = planId;
+  document.getElementById('commentsList').innerHTML = '<div class="loading"><div class="spinner"></div> Chargement...</div>';
+  document.getElementById('commentInput').value = '';
+  openModal('commentsModal');
+  try {
+    const resp = await fetch('/api/plans/' + planId + '/comments?email=' + encodeURIComponent(userEmail));
+    const data = await resp.json();
+    if (!data.ok) { document.getElementById('commentsList').innerHTML = '<div class="empty-state">Erreur</div>'; return; }
+    if (!data.comments || !data.comments.length) {
+      document.getElementById('commentsList').innerHTML = '<div style="color:#64748b;text-align:center;padding:20px;font-size:13px">Aucun commentaire pour le moment</div>';
+      return;
+    }
+    document.getElementById('commentsList').innerHTML = data.comments.map(c =>
+      `<div class="comment-item">
+        <div class="comment-author">${c.author_email}</div>
+        <div class="comment-text">${c.comment}</div>
+        <div class="comment-date">${c.created_at ? c.created_at.slice(0,16).replace('T',' à ') : ''}</div>
+      </div>`
+    ).join('');
+  } catch(e) { document.getElementById('commentsList').innerHTML = '<div class="empty-state">Erreur</div>'; }
+}
+
+async function addComment() {
+  const text = document.getElementById('commentInput').value.trim();
+  if (!text) return;
+  try {
+    const resp = await fetch('/api/plans/' + currentCommentPlanId + '/comments', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email: userEmail, comment: text})
+    });
+    const data = await resp.json();
+    if (!data.ok) { toast(data.error || 'Erreur', 'error'); return; }
+    document.getElementById('commentInput').value = '';
+    toast('💬 Commentaire ajouté', 'success');
+    openComments(currentCommentPlanId);
+  } catch(e) { toast('Erreur réseau', 'error'); }
+}
+
+// ===== STATS PAGE =====
+async function loadStatsPage() {
+  try {
+    const resp = await fetch('/api/stats?email=' + encodeURIComponent(userEmail));
+    const data = await resp.json();
+    if (!data.ok) return;
+    document.getElementById('statsTotal').textContent = data.total;
+    document.getElementById('statsValidees').textContent = data.validees;
+    document.getElementById('statsEnAttente').textContent = data.en_attente;
+    document.getElementById('statsPlansTotal').textContent = data.plans_total;
+
+    // Par animateur
+    const parAnim = data.par_animateur || [];
+    document.getElementById('animateurDetail').innerHTML = parAnim.length
+      ? parAnim.map((r, i) => `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1e293b;font-size:13px">
+          <span style="color:#cbd5e1">${i+1}. ${r.animateur}</span>
+          <span style="color:#3b82f6;font-weight:600">${r.count}</span>
+        </div>`).join('')
+      : '<div style="color:#64748b;padding:20px;text-align:center;font-size:13px">Aucune donnée</div>';
+
+    // Par chantier
+    const parChantier = data.par_chantier || [];
+    document.getElementById('chantierDetail').innerHTML = parChantier.length
+      ? parChantier.map((r, i) => `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1e293b;font-size:13px">
+          <span style="color:#cbd5e1">${i+1}. ${r.chantier}</span>
+          <span style="color:#22c55e;font-weight:600">${r.count}</span>
+        </div>`).join('')
+      : '<div style="color:#64748b;padding:20px;text-align:center;font-size:13px">Aucune donnée</div>';
+  } catch(e) { console.error(e); }
+}
+
+// ===== HTML ESCAPE =====
+function escHtml(str) {
+  if (!str) return '';
+  var d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// ===== AMELIORATIONS =====
+async function showImprovementsTab() {
+  document.querySelectorAll('.nav a').forEach(function(b){b.classList.remove('active')});
+  document.getElementById('tab-improvements') && document.getElementById('tab-improvements').classList.add('active');
+  document.querySelectorAll('.page').forEach(function(c){c.classList.remove('active')});
+  document.getElementById('page-improvements').classList.add('active');
+  await loadImprovementsList();
+}
+window.showImprovementsTab = showImprovementsTab;
+
+async function loadImprovementsList() {
+  var el = document.getElementById('improvements-container');
+  if (!el) return;
+  el.innerHTML = '<div class="loading"><div class="spinner"></div> Chargement...</div>';
+  try {
+    var allR = await fetch('/api/improvements?status=all&email=' + encodeURIComponent(userEmail));
+    var all = await allR.json();
+    if (!all.ok) { el.innerHTML = '<div class="empty-state" style="color:#ef4444">Erreur de chargement</div>'; return; }
+
+    var imps = all.improvements || [];
+    if (imps.length === 0) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">💡</div><h3>Aucune demande d\'amélioration</h3><p>Aucune demande pour le moment</p></div>';
+      return;
+    }
+
+    // Trier : pending en premier
+    var order = {pending: 0, approved: 1, rejected: 2, done: 3};
+    imps.sort(function(a, b) { return (order[a.status] || 9) - (order[b.status] || 9); });
+
+    var html = '';
+    imps.forEach(function(imp) {
+      var statusColor, statusText, statusBg;
+      if (imp.status === 'pending') { statusColor = '#f59e0b'; statusBg = 'rgba(245,158,11,0.15)'; statusText = '⏳ En attente'; }
+      else if (imp.status === 'approved') { statusColor = '#3b82f6'; statusBg = 'rgba(59,130,246,0.15)'; statusText = '✅ Approuvée'; }
+      else if (imp.status === 'rejected') { statusColor = '#ef4444'; statusBg = 'rgba(239,68,68,0.15)'; statusText = '❌ Refusée'; }
+      else if (imp.status === 'done') { statusColor = '#22c55e'; statusBg = 'rgba(34,197,94,0.15)'; statusText = '✅ Réalisée'; }
+
+      html += '<div class="stat-card" style="margin-bottom:12px;padding:16px">' +
+        '<div style="display:flex;justify-content:space-between;align-items:start;gap:10px;flex-wrap:wrap">' +
+          '<div style="flex:1">' +
+            '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">' +
+              '<strong style="font-size:15px;color:#f1f5f9">' + escHtml(imp.title) + '</strong>' +
+              '<span style="display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;color:' + statusColor + ';background:' + statusBg + '">' + statusText + '</span>' +
+            '</div>' +
+            '<p style="font-size:13px;color:#94a3b8;margin-bottom:6px">' + escHtml(imp.text) + '</p>' +
+            '<div style="font-size:11px;color:#64748b">Par <strong>' + escHtml(imp.email.split('@')[0]) + '</strong> · le ' + (imp.created_at ? imp.created_at.split('T')[0] : '') + '</div>';
+
+      if (imp.review_comment) {
+        html += '<div style="margin-top:6px;padding:8px 10px;background:rgba(59,130,246,0.1);border-radius:6px;font-size:12px;color:#93c5fd;border-left:3px solid #3b82f6">' +
+          '<strong>Réponse :</strong> ' + escHtml(imp.review_comment) + '</div>';
+      }
+
+      html += '</div>';
+
+      // Actions (seulement pour pending)
+      if (imp.status === 'pending') {
+        html += '<div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">' +
+          '<button class="action-btn approve-btn" onclick="approveImprovement(\'' + imp.id + '\')" style="padding:8px 16px;background:rgba(34,197,94,0.2);color:#22c55e;border:1px solid rgba(34,197,94,0.3);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">✅ Approuver</button>' +
+          '<button class="action-btn reject-btn" onclick="rejectImprovement(\'' + imp.id + '\')" style="padding:8px 16px;background:rgba(239,68,68,0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">❌ Refuser</button>' +
+        '</div>';
+      }
+
+      html += '</div>';
+    });
+
+    el.innerHTML = html;
+
+    // Mettre à jour le badge
+    var pendingCount = imps.filter(function(i) { return i.status === 'pending'; }).length;
+    var badge = document.getElementById('impBadge');
+    if (badge) {
+      if (pendingCount > 0) { badge.textContent = pendingCount; badge.style.display = 'inline'; }
+      else badge.style.display = 'none';
+    }
+    var countLabel = document.getElementById('impCount');
+    if (countLabel) countLabel.textContent = imps.length;
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state" style="color:#ef4444">Erreur: ' + e.message + '</div>';
+  }
+}
+window.loadImprovementsList = loadImprovementsList;
+
+async function approveImprovement(id) {
+  var comment = prompt('Commentaire optionnel (ou OK pour valider):');
+  if (comment === null) return;
+  try {
+    var r = await fetch('/api/improvements/' + id, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email: userEmail, action: 'approve', comment: comment || 'Validé'})
+    });
+    var d = await r.json();
+    if (d.ok) { toast('✅ Demande approuvée !', 'success'); loadImprovementsList(); }
+    else toast('❌ Erreur: ' + (d.error || ''), 'error');
+  } catch(e) { toast('Erreur réseau', 'error'); }
+}
+window.approveImprovement = approveImprovement;
+
+async function rejectImprovement(id) {
+  var comment = prompt('Motif du refus (obligatoire):');
+  if (!comment || comment === null) return;
+  try {
+    var r = await fetch('/api/improvements/' + id, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email: userEmail, action: 'reject', comment: comment})
+    });
+    var d = await r.json();
+    if (d.ok) { toast('❌ Demande refusée', 'info'); loadImprovementsList(); }
+    else toast('❌ Erreur: ' + (d.error || ''), 'error');
+  } catch(e) { toast('Erreur réseau', 'error'); }
+}
+window.rejectImprovement = rejectImprovement;
+</script>
+</body>
+</html>

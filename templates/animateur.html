@@ -1,0 +1,1979 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1e3a5f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/static/manifest.json">
+<link rel="icon" href="/static/icon.svg" type="image/svg+xml">
+<title>Causeries 1/4h Sécurité | Animateur</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;background:#f5f7fa;color:#1e293b;min-height:100vh;padding-bottom:100px}
+input,textarea,button{font-family:inherit}
+.header{background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:18px 16px 12px;position:sticky;top:0;z-index:50}
+.header-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px}
+.header h1{font-size:20px;font-weight:700}.header .sub{font-size:13px;opacity:.8;margin-top:1px}
+.user-badge{background:rgba(255,255,255,.15);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;cursor:pointer}
+.header-badges{display:flex;gap:4px;align-items:center}
+.container{max-width:500px;margin:0 auto;padding:12px}
+.card{background:white;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid #e9edf2}
+.card-title{font-size:15px;font-weight:600;margin-bottom:14px;color:#1e293b}
+.fg{margin-bottom:14px}.fg:last-child{margin-bottom:0}
+.fl{display:block;font-size:12px;font-weight:600;color:#64748b;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.in{width:100%;padding:11px 13px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;color:#1e293b;font-size:15px;transition:border-color .2s}
+.in:focus{outline:none;border-color:#2d5a87;background:white;box-shadow:0 0 0 3px rgba(45,90,135,.1)}
+.in::placeholder{color:#94a3b8}
+textarea.in{resize:vertical;min-height:70px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 18px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .1s;width:100%}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:#1e3a5f;color:white}.btn-primary:active{background:#2d5a87}
+.btn-secondary{background:#f1f5f9;color:#475569;border:1.5px solid #e2e8f0}
+.btn-ghost{background:none;color:#64748b;width:auto;padding:6px 10px}
+.btn-sm{padding:10px 14px;font-size:13px;width:auto}
+.btn-danger{background:#fef2f2;color:#ef4444;width:auto}
+.btn-group{display:flex;gap:8px}.btn-group .btn{flex:1}
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.theme-btn{padding:9px 4px;border-radius:8px;background:#f8fafc;border:1.5px solid #e2e8f0;color:#64748b;font-size:13px;font-weight:500;cursor:pointer;text-align:center;transition:all .12s;font-family:inherit}
+.theme-btn:active{transform:scale(.96)}
+.theme-btn.active{background:#eef2ff;border-color:#4f6f8f;color:#1e3a5f;font-weight:600}
+.pr{display:flex;gap:6px;margin-bottom:6px;align-items:center}
+.pr .in{flex:1}
+.pr-del{width:36px;height:36px;border:none;border-radius:8px;background:#fef2f2;color:#ef4444;font-size:16px;cursor:pointer;flex-shrink:0}
+.mode-toggle{display:flex;gap:6px}
+.mode-btn{flex:1;padding:10px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;text-align:center;border:1.5px solid #e2e8f0;transition:all .12s;font-family:inherit}
+.mode-btn:active{transform:scale(.97)}
+.mode-btn.active{background:#1e3a5f;color:white;border-color:#1e3a5f}
+.mode-btn.inactive{background:#f1f5f9;color:#64748b}
+.guide-topic{padding:12px;border:1.5px solid #e2e8f0;border-radius:10px;margin-bottom:6px;cursor:pointer;background:#f8fafc;transition:all .12s}
+.guide-topic:active{transform:scale(.98)}
+.guide-topic.active{background:#eef2ff;border-color:#4f6f8f}
+.ci{background:#f8fafc;border-radius:10px;padding:14px;margin-bottom:8px;cursor:pointer;border:1px solid #e9edf2}
+.ci:active{border-color:#2d5a87}
+.ci-date{font-size:11px;color:#94a3b8}
+.ci-chantier{font-size:16px;font-weight:600;margin-top:2px}
+.ci-themes{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
+.ci-parts{font-size:13px;color:#64748b;margin-top:4px}
+.tag{font-size:11px;padding:3px 8px;border-radius:20px;font-weight:500;background:#eef2ff;color:#1e3a5f}
+.empty{text-align:center;padding:32px 16px}
+.empty .icon{font-size:40px;margin-bottom:8px;opacity:.3}
+.empty p{color:#94a3b8;font-size:14px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #e2e8f0;display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
+.nav-btn{flex:1;padding:8px 4px;border:none;background:none;font-size:10px;font-weight:500;color:#94a3b8;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;font-family:inherit;position:relative}
+.nav-btn .nav-icon{font-size:20px}
+.nav-btn.active{color:#1e3a5f;font-weight:700}
+.nav-badge{background:#ef4444;color:white;font-size:9px;padding:1px 5px;border-radius:8px;position:absolute;top:0;right:calc(50% - 18px)}
+.page{display:none;animation:fade .2s}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.login-page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:90vh;padding:40px 24px}
+.login-page .logo{font-size:48px;margin-bottom:8px}
+.login-page h2{font-size:22px;font-weight:700;color:#1e293b}
+.login-page p{color:#64748b;font-size:14px;margin:4px 0 20px;text-align:center}
+.login-card{background:white;border-radius:16px;padding:24px;width:100%;max-width:360px;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.login-card .in{text-align:center;font-size:16px}
+.login-card .btn{margin-top:12px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:200;align-items:flex-end;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:white;border-radius:14px 14px 0 0;padding:20px;max-width:500px;width:100%;max-height:85vh;overflow-y:auto;animation:up .3s}
+@keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal h3{font-size:17px;margin-bottom:16px;padding-right:30px}
+.modal-close{position:absolute;top:14px;right:14px;background:none;border:none;color:#94a3b8;font-size:22px;cursor:pointer}
+.dl{display:flex;padding:5px 0}
+.dl-l{flex:0 0 80px;font-size:12px;color:#94a3b8}
+.dl-v{flex:1;font-size:14px;font-weight:500}
+.dl-notes{font-size:14px;line-height:1.6;color:#475569;white-space:pre-wrap}
+.dl-parts{font-size:14px;line-height:1.8}
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.sc{background:#f8fafc;border-radius:10px;padding:14px 8px;text-align:center;border:1px solid #e9edf2}
+.sc .num{font-size:24px;font-weight:700;color:#1e3a5f}
+.sc .lbl{font-size:11px;color:#94a3b8;margin-top:2px}
+.ss{margin-top:12px}
+.ss h4{font-size:13px;color:#64748b;margin-bottom:6px;font-weight:600}
+.sr{display:flex;justify-content:space-between;padding:6px 0;font-size:14px;border-bottom:1px solid #f1f5f9}
+.sr .num{color:#1e3a5f;font-weight:600}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:500;z-index:300;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+.wiz-overlay{display:none;position:fixed;inset:0;z-index:400;flex-direction:column;background:white}
+.wiz-overlay.show{display:flex}
+.wiz-overlay .wiz-hdr{background:#1e3a5f;color:white;padding:16px;flex-shrink:0}
+.wiz-overlay .wiz-hdr h3{font-size:17px;font-weight:600}
+.wiz-overlay .wiz-hdr .sub{font-size:12px;opacity:.8;margin-top:2px}
+.wiz-progress{height:4px;background:#e2e8f0;flex-shrink:0}
+.wiz-progress .bar{height:100%;background:#38bdf8;transition:width .3s}
+.wiz-body{flex:1;overflow-y:auto;padding:16px;max-width:500px;margin:0 auto;width:100%}
+.wiz-label{font-size:13px;font-weight:600;color:#64748b;margin-bottom:8px}
+.wiz-row{padding:12px;border:1.5px solid #e2e8f0;border-radius:10px;margin-bottom:6px;cursor:pointer;display:flex;align-items:center;gap:10px;background:#f8fafc;transition:all .12s}
+.wiz-row:active{transform:scale(.98)}
+.wiz-row .check{width:22px;height:22px;border-radius:5px;border:2px solid #cbd5e1;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s;font-size:13px;font-weight:700;color:white}
+.wiz-row.done .check{background:#1e3a5f;border-color:#1e3a5f}
+.wiz-row .txt{font-size:14px;font-weight:500}
+.wiz-btns{display:flex;gap:8px;flex-shrink:0;padding:12px 16px;border-top:1px solid #e2e8f0;background:white}
+.wiz-btns .btn{flex:1}
+.result-banner{padding:20px;border-radius:14px;text-align:center;margin-bottom:12px}
+.result-banner.good{background:#f0fdf4;border:1px solid #bbf7d0}
+.result-banner.warn{background:#fefce8;border:1px solid #fde68a}
+.result-banner .icon{font-size:36px;margin-bottom:6px}
+.result-banner h4{font-size:16px;font-weight:600;margin-bottom:4px}
+.result-banner p{font-size:14px;color:#475569;line-height:1.5}
+.action-row{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px;margin-bottom:6px;font-size:14px;display:flex;align-items:center;gap:8px}
+.action-row .num{width:24px;height:24px;border-radius:50%;background:#1e3a5f;color:white;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.profile-item{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid #f1f5f9}
+.profile-item .name{flex:1;font-size:13px}
+.profile-item .del{background:none;border:none;color:#ef4444;font-size:12px;cursor:pointer;padding:2px 8px;border-radius:6px}
+.profile-item .del:hover{background:#fef2f2}
+.sig-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.5);align-items:center;justify-content:center;padding:20px}
+.sig-overlay.show{display:flex}
+.sig-pad{background:white;border-radius:14px;padding:16px;width:100%;max-width:400px;text-align:center}
+.sig-pad h4{font-size:16px;margin-bottom:4px}
+.sig-meta{font-size:13px;color:#64748b;margin-bottom:10px}
+.sig-cw{background:white;border:2px solid #e2e8f0;border-radius:10px;width:100%;height:180px;touch-action:none;cursor:crosshair;position:relative}
+.sig-cw canvas{display:block;width:100%;height:100%}
+.sig-actions{display:flex;gap:8px;margin-top:12px}.sig-actions .btn{flex:1}
+/* Certification styles */
+.cert-card{background:white;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid #e9edf2}
+.cert-card .title{font-size:16px;font-weight:700;color:#1e293b;margin-bottom:12px}
+.conformite-badge{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;margin-bottom:14px}
+.conformite-badge.vert{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+.conformite-badge.orange{background:#fefce8;color:#d97706;border:1px solid #fde68a}
+.conformite-badge.rouge{background:#fef2f2;color:#ef4444;border:1px solid #fecaca}
+.conformite-badge .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.conformite-badge.vert .dot{background:#16a34a}
+.conformite-badge.orange .dot{background:#d97706}
+.conformite-badge.rouge .dot{background:#ef4444}
+.cert-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.cert-stat{background:#f8fafc;border-radius:10px;padding:12px;text-align:center;border:1px solid #e9edf2}
+.cert-stat .num{font-size:22px;font-weight:700;color:#1e3a5f}
+.cert-stat .lbl{font-size:10px;color:#94a3b8;margin-top:2px}
+.cert-section-title{font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.4px;margin:12px 0 6px;padding-bottom:4px;border-bottom:1px solid #e2e8f0}
+.bar-chart{margin-bottom:12px}
+.bar-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.bar-label{font-size:11px;color:#64748b;width:55px;flex-shrink:0}
+.bar-track{flex:1;background:#e2e8f0;border-radius:4px;height:18px;overflow:hidden}
+.bar-fill{height:100%;background:#1e3a5f;border-radius:4px;min-width:4px;transition:width .3s}
+.bar-count{width:24px;text-align:right;font-size:12px;font-weight:600;color:#1e3a5f}
+.cert-item{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid #f1f5f9}
+.cert-item .cnt{font-weight:600;color:#1e3a5f}
+.cert-derniere{padding:10px;background:#f8fafc;border-radius:8px;border:1px solid #e9edf2}
+.cert-derniere .d{font-size:11px;color:#94a3b8}
+.cert-derniere .c{font-size:15px;font-weight:600;margin-top:2px}
+/* Photos carousel */
+.photos-carousel{display:flex;gap:8px;overflow-x:auto;padding:8px 0;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.photos-carousel::-webkit-scrollbar{height:4px}
+.photos-carousel::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px}
+.photo-item{flex:0 0 auto;scroll-snap-align:start;width:200px;border-radius:10px;overflow:hidden;border:1px solid #e2e8f0;position:relative}
+.photo-item img{width:100%;height:150px;object-fit:cover;display:block}
+.photo-item .cap{font-size:11px;color:#64748b;padding:4px 8px}
+.photo-item .del-photo{position:absolute;top:4px;right:4px;background:rgba(239,68,68,.8);color:white;border:none;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+@media(min-width:500px){.container{padding:16px}.card{padding:20px}}
+/* Prevention dashboard */
+.prev-header{background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;padding:18px 16px;border-radius:14px;margin-bottom:14px}
+.prev-header h2{font-size:18px;font-weight:700;margin:0}
+.prev-header p{font-size:12px;opacity:.8;margin-top:2px}
+.prev-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.prev-stat-card{background:white;border-radius:10px;padding:12px 8px;text-align:center;border:1px solid #e9edf2;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.prev-stat-card .num{font-size:22px;font-weight:700;color:#1e3a5f}
+.prev-stat-card .lbl{font-size:10px;color:#94a3b8;margin-top:2px}
+.prev-stat-card.mini .num{font-size:18px}
+.prev-filter-bar{display:flex;gap:8px;margin-bottom:10px}
+.prev-filter-bar select{flex:1;padding:9px 12px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px;color:#1e293b;font-family:inherit;cursor:pointer}
+.prev-filter-bar select:focus{outline:none;border-color:#2d5a87}
+.prev-table{width:100%;border-collapse:collapse;font-size:13px}
+.prev-table th{text-align:left;padding:8px 6px;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.3px;border-bottom:1px solid #e2e8f0}
+.prev-table td{padding:8px 6px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+.prev-table tbody tr:hover{background:#f8fafc}
+.prev-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.prev-badge.green{background:#f0fdf4;color:#16a34a}
+.prev-badge.amber{background:#fefce8;color:#d97706}
+.prev-badge.red{background:#fef2f2;color:#dc2626}
+.prev-action-btn{width:28px;height:28px;border:none;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:14px;transition:background .1s;background:#f1f5f9}
+.prev-action-btn.ok:hover{background:#f0fdf4}
+.prev-action-btn.no:hover{background:#fef2f2}
+.prev-action-btn.view:hover{background:#eef2ff}
+.prev-action-btn.plan:hover{background:#fefce8}
+.plan-card{background:white;border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid #e9edf2;border-left:3px solid #2d5a87}
+.plan-card.high{border-left-color:#dc2626}
+.plan-card .plan-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.plan-card .plan-head strong{font-size:14px;color:#1e293b}
+.plan-card .plan-meta{font-size:12px;color:#64748b;margin-top:2px}
+.plan-priority{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+.plan-priority.high{background:#fef2f2;color:#dc2626}
+.plan-priority.normal{background:#f0fdf4;color:#16a34a}
+.plan-comment{background:#f8fafc;border-radius:8px;padding:8px 10px;margin-bottom:4px;font-size:13px}
+.plan-comment .date{font-size:11px;color:#94a3b8}
+</style>
+</head>
+<body>
+
+<div id="login-screen" class="login-page">
+  <div class="logo">🛡️</div>
+  <h2>1/4h Securite</h2>
+  <p>Application de causeries 1/4h sécurité</p>
+  <div class="login-card">
+    <div class="fg">
+      <label class="fl">Identifiant (email)</label>
+      <input type="email" class="in" id="login-email" placeholder="prenom@exemple.fr" inputmode="email" autocomplete="email">
+    </div>
+    <button class="btn btn-primary" onclick="login()">Se connecter</button>
+    <p style="font-size:12px;color:#94a3b8;margin-top:8px;text-align:center">Aucun mot de passe</p>
+  </div>
+</div>
+
+<div id="app-main" style="display:none">
+<div class="header">
+  <div class="header-row">
+    <div><h1>Causeries 1/4h</h1><div class="sub">Gestion des causeries sécurité</div></div>
+    <div class="header-badges">
+      <span id="offline-badge" style="display:none;background:rgba(255,255,255,.15);padding:2px 8px;border-radius:10px;font-size:10px">📡 Hors-ligne</span>
+      <span id="pending-badge" style="display:none;background:rgba(255,200,0,.2);padding:2px 8px;border-radius:10px;font-size:10px">⏳ <span id="pending-count">0</span></span>
+      <div class="user-badge" onclick="showProfile()"><span id="hdr-email">email</span> <span id="hdr-badge" style="font-size:11px;opacity:.7"></span></div>
+    </div>
+  </div>
+</div>
+<div class="container">
+
+<div class="page active" id="p-new">
+  <div class="card" id="suggestions-card" style="display:none">
+    <div class="card-title">💡 Suggestions</div>
+    <div id="suggestion-du-jour" style="background:#eef2ff;border-radius:10px;padding:12px;margin-bottom:10px;font-size:14px;cursor:pointer;border:1px solid #c7d2e9" onclick="applySuggestionDuJour()"></div>
+    <div id="suggestions-list"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Nouvelle causerie</div>
+    <div class="fg">
+      <label class="fl">Chantier</label>
+      <input type="text" class="in" id="ch-inp" placeholder="Nom du chantier..." list="ch-list" autocomplete="off">
+      <datalist id="ch-list"></datalist>
+      <datalist id="parts-list"></datalist>
+    </div>
+    <div class="fg">
+      <label class="fl">Mode sujet</label>
+      <div class="mode-toggle">
+        <button class="mode-btn inactive" id="mode-libre" onclick="setMode('libre')">📝 Libre</button>
+        <button class="mode-btn active" id="mode-guide" onclick="setMode('guide')">🎯 Guide</button>
+      </div>
+    </div>
+    <div class="fg">
+      <label class="fl">Domaine</label>
+      <div class="theme-grid" id="theme-grid">
+        <button class="theme-btn active" data-t="Securite">🛡️ Securite</button>
+        <button class="theme-btn" data-t="Environnement">🌿 Environnement</button>
+        <button class="theme-btn" data-t="Sante">❤️ Sante</button>
+        <button class="theme-btn" data-t="Surete">🔒 Surete</button>
+        <button class="theme-btn" data-t="Qualite">✅ Qualite</button>
+        <button class="theme-btn" data-t="Autre">📋 Autre</button>
+      </div>
+    </div>
+    <div id="libre-block" style="display:none">
+      <div class="fg">
+        <label class="fl">Notes / Sujets abordes</label>
+        <textarea class="in" id="notes-inp" rows="3" placeholder="Ex: Verification EPI, tri dechets..."></textarea>
+      </div>
+    </div>
+    <div id="guide-block">
+      <div class="fg">
+        <label class="fl">Sujet guide</label>
+        <div id="guide-list"></div>
+      </div>
+    </div>
+    <div class="fg">
+      <label class="fl">Participants <span id="parts-nb" style="text-transform:none;font-weight:400"></span></label>
+      <div id="parts-c"></div>
+      <button class="btn btn-ghost btn-sm" onclick="addPart()" style="padding-left:0">+ Ajouter</button>
+    </div>
+    <div class="fg">
+      <label class="fl">Photo</label>
+      <input type="file" accept="image/*" capture="environment" style="font-size:13px;padding:8px 0" onchange="uploadPhoto(this)">
+    </div>
+    <button class="btn btn-primary" onclick="startFlow()">Lancer les signatures</button>
+  </div>
+</div>
+
+<div class="page" id="p-history">
+  <div class="card">
+    <div class="card-title" style="display:flex;justify-content:space-between"><span>Historique</span><span id="h-cnt" style="font-size:13px;color:#94a3b8;font-weight:400"></span></div>
+    <div id="h-list"></div>
+  </div>
+</div>
+
+<div class="page" id="p-stats"><div id="stats-c"></div></div>
+
+<div class="page" id="p-certification"><div id="cert-c"></div></div>
+
+<div class="page" id="p-improvements">
+  <div class="card">
+    <div class="card-title">💡 Proposer une amélioration</div>
+    <p style="font-size:13px;color:#64748b;margin-bottom:12px">Une idée pour améliorer l'application ? Proposez-la ici. L'équipe Prévention la validera et je la coderai.</p>
+    <div class="fg">
+      <label class="fl">Titre court</label>
+      <input type="text" id="imp-title" class="in" placeholder="Ex: Export CSV des causeries" maxlength="100">
+    </div>
+    <div class="fg">
+      <label class="fl">Description détaillée</label>
+      <textarea id="imp-text" class="in" placeholder="Décrivez ce que vous voulez, pourquoi, comment ça devrait marcher..." style="min-height:100px"></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="submitImprovement()">📨 Envoyer la demande</button>
+  </div>
+  <div class="card">
+    <div class="card-title">📋 Mes demandes</div>
+    <div id="imp-list"></div>
+  </div>
+</div>
+
+<div class="page" id="p-prevention"><div id="prev-c"></div></div>
+
+</div>
+<div class="nav">
+  <button class="nav-btn active" data-page="new" onclick="showPage('new')"><span class="nav-icon">+</span>Nouvelle</button>
+  <button class="nav-btn" data-page="history" onclick="showPage('history')"><span class="nav-icon">☰</span>Historique<span class="nav-badge" id="nav-badge" style="display:none"></span></button>
+  <button class="nav-btn" data-page="stats" onclick="showPage('stats')"><span class="nav-icon">◉</span>Stats</button>
+  <button class="nav-btn" data-page="certification" onclick="showPage('certification')"><span class="nav-icon">✓</span>Certification</button>
+  <button class="nav-btn" data-page="improvements" onclick="showPage('improvements')"><span class="nav-icon">💡</span>Idées</button>
+  <button class="nav-btn" data-page="prevention" onclick="showPage('prevention')" id="nav-prevention" style="display:none">
+    <span class="nav-icon">🛡️</span>Prévention
+  </button>
+</div>
+</div>
+
+<!-- MODAL DETAIL -->
+<div class="modal-overlay" id="detail-modal"><div class="modal" style="position:relative">
+  <button onclick="closeModal()" class="modal-close">x</button>
+  <h3>Causerie</h3>
+  <div id="detail-c"></div>
+  <div id="photos-display" style="margin-top:10px"></div>
+  <div id="qr-display" style="text-align:center;margin-top:12px;padding:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px"></div>
+  <div class="btn-group" style="margin-top:14px">
+    <button class="btn btn-secondary" onclick="printDetail()">🖨️ Imprimer</button>
+    <button class="btn btn-primary" onclick="exportPDF()">📄 PDF Pro</button>
+    <button class="btn btn-danger" onclick="delCauserie()" style="flex:0 0 46px">x</button>
+  </div>
+</div></div>
+
+<!-- MODAL PROFIL -->
+<div class="modal-overlay" id="profile-modal"><div class="modal" style="position:relative">
+  <button onclick="closeProfile()" class="modal-close">x</button>
+  <h3>Mon compte</h3>
+  <div style="text-align:center;padding:8px 0">
+    <div style="font-size:36px">👤</div>
+    <div style="font-size:16px;font-weight:600" id="prof-email"></div>
+    <div style="font-size:13px;color:#94a3b8">Animateur</div>
+  </div>
+  <div class="fg">
+    <label class="fl" style="display:flex;justify-content:space-between">Chantiers <span id="prof-ch-nb" style="font-weight:400;text-transform:none">0</span></label>
+    <div id="prof-ch"></div>
+  </div>
+  <div class="fg">
+    <label class="fl" style="display:flex;justify-content:space-between">Equipe <span id="prof-p-nb" style="font-weight:400;text-transform:none">0</span></label>
+    <div id="prof-p"></div>
+  </div>
+
+  <div class="fg">
+    <label class="fl" style="display:flex;justify-content:space-between">Partages <span id="prof-sh-nb" style="font-weight:400;text-transform:none">0</span></label>
+    <div id="prof-sh" style="margin-bottom:6px"></div>
+    <div style="display:flex;gap:6px">
+      <input type="email" class="in" id="share-email" placeholder="Email du destinataire..." style="flex:1">
+      <select id="share-chantier" class="in" style="flex:0 0 120px"></select>
+      <button class="btn btn-primary btn-sm" onclick="addShare()" style="width:auto;padding:11px 14px">Partager</button>
+    </div>
+  </div>
+  <button class="btn btn-secondary" onclick="logout()" style="margin-top:8px">Deconnexion</button>
+</div></div>
+
+<!-- WIZARD -->
+<div class="wiz-overlay" id="wizard">
+  <div class="wiz-hdr"><h3 id="wiz-title">Guide</h3><div class="sub" id="wiz-sub"></div></div>
+  <div class="wiz-progress"><div class="bar" id="wiz-progress" style="width:0%"></div></div>
+  <div class="wiz-body" id="wiz-body"></div>
+  <div class="wiz-btns" id="wiz-btns"></div>
+</div>
+
+<!-- SIGNATURE -->
+<div class="sig-overlay" id="sig-overlay">
+  <div class="sig-pad">
+    <h4 id="sig-name">Participant</h4>
+    <div class="sig-meta" id="sig-role"></div>
+    <div id="sig-sign">
+      <div class="sig-cw" id="sig-cw"><canvas id="sig-canvas"></canvas></div>
+      <div class="sig-actions"><button class="btn btn-secondary" onclick="sigClear()">Effacer</button><button class="btn btn-primary" onclick="sigNext()">Valider</button></div>
+    </div>
+    <div id="sig-done" style="display:none">
+      <div style="font-size:48px;margin:20px 0">✅</div>
+      <p style="font-size:18px;font-weight:600;color:#16a34a">Signe !</p>
+      <p style="color:#64748b;font-size:14px;margin-top:4px" id="sig-done-name"></p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+const API=window.location.origin;
+let user=null, causeries=[], did=null;
+let pCh=[], pP=[];
+let guideTopic=null, guideTopicId=null;
+let sigQ=[], sigI=0, sigParts=[], sigAnim=null, sigData=null;
+
+const GUIDES={
+  'Securite':{
+    label:'Securite',
+    icon:'🛡️',
+    topics:[
+      {
+        id:'verif-mat',
+        label:'Verification du materiel et conformite',
+        checks:[
+          'Faire le tour du container de stockage',
+          'Verifier les dates d\'echeance / peremption',
+          'Verifier la conformite des apparaux (epingles, cordes, sangles)',
+          'Identifier le materiel non conforme'
+        ],
+        nonConformityQuestion:'La verification a-t-elle donne des non-conformites ?',
+        nonConformityYes:{
+          title:'Non-conformites detectees',
+          message:'Mettez de cote tous les apparaux non conformes. Le Service Prevention est prevenu. Rapprochez-vous de lui pour regler cette non-conformite.',
+          type:'warn',
+          actions:[
+            'Mettre de cote le materiel non conforme',
+            'Informer le Service Prevention',
+            'Planifier le remplacement / la mise en conformite'
+          ]
+        },
+        nonConformityNo:{
+          title:'Tout est conforme',
+          message:'Aucune non-conformite detectee. Bonne continuation !',
+          type:'good',
+          actions:[]
+        }
+      },
+      {
+        id:'epi',
+        label:'Equipements de Protection Individuelle',
+        checks:[
+          'Verifier la disponibilite des EPI pour chaque compagnon',
+          'Controler l\'etat des casques, harnais et gants',
+          'Verifier la date de peremption des EPI',
+          'S\'assurer que les EPI sont adaptes aux taches du jour'
+        ],
+        nonConformityQuestion:'Des EPI manquants ou defectueux ont-ils ete identifies ?',
+        nonConformityYes:{
+          title:'EPI non conformes signalés',
+          message:'Remplacez immediatement tout EPI defectueux. Aucun travail ne peut demarrer sans EPI adaptes. Le chef de chantier doit commander les remplacements.',
+          type:'warn',
+          actions:[
+            'Mettre au rebut les EPI defectueux',
+            'Fournir des EPI de remplacement',
+            'Noter les manques dans le registre de securite'
+          ]
+        },
+        nonConformityNo:{
+          title:'EPI conformes',
+          message:'Tous les EPI sont disponibles et en bon etat. Pensez a les porter en permanence sur le chantier.',
+          type:'good',
+          actions:[]
+        }
+      },
+      {
+        id:'travail-hauteur',
+        label:'Travail en hauteur et protection contre les chutes',
+        checks:[
+          'Verifier l\'etat des garde-corps et des plateformes',
+          'Controler les points d\'ancrage et les longes',
+          'S\'assurer que les echafaudages sont conformes et stabilises',
+          'Verifier que le sol est degage sous la zone de travail'
+        ],
+        nonConformityQuestion:'Un risque de chute de hauteur a-t-il ete identifie ?',
+        nonConformityYes:{
+          title:'Risque de chute identifie',
+          message:'Arret immediat des travaux en hauteur dans la zone concerne. Un dispositif de protection collective ou individuelle doit etre mis en place avant toute reprise.',
+          type:'warn',
+          actions:[
+            'Stopper les travaux dans la zone a risque',
+            'Installer ou reparer les protections collectives',
+            'S\'assurer que chaque intervenant porte un harnais conforme'
+          ]
+        },
+        nonConformityNo:{
+          title:'Travail en hauteur securise',
+          message:'Les protections sont en place et conformes. Travaillez en toute securite en restant vigilant.',
+          type:'good',
+          actions:[]
+        }
+      },
+      {
+        id:'securite-electrique',
+        label:'Securite electrique et outillage portatif',
+        checks:[
+          'Verifier l\'etat des cables et des prises electriques',
+          'Controler la date du dernier test des disjoncteurs differentiels',
+          'Inspecter les outils portatifs (carters, interrupteurs, fils)',
+          'S\'assurer que les rallonges sont adaptees a l\'usage exterieur'
+        ],
+        nonConformityQuestion:'Un materiel electrique non conforme ou dangereux a-t-il ete trouve ?',
+        nonConformityYes:{
+          title:'Materiel electrique non conforme',
+          message:'Debranchez et retirez immediatement tout materiel defectueux. Faites-le verifier par un electricien habilitre avant toute nouvelle utilisation.',
+          type:'warn',
+          actions:[
+            'Debrancher et confisquer le materiel defectueux',
+            'Etiqueter le materiel comme "Hors service"',
+            'Contacter le responsable electrique pour reparation'
+          ]
+        },
+        nonConformityNo:{
+          title:'Installation electrique conforme',
+          message:'Aucun defaut electrique detecte. Continuez a utiliser le materiel en respectant les consignes de securite.',
+          type:'good',
+          actions:[]
+        }
+      }
+    ]
+  },
+  'Environnement':{
+    label:'Environnement',
+    icon:'🌿',
+    topics:[
+      {
+        id:'dechets-tri',
+        label:'Gestion des dechets et tri selectif',
+        checks:[
+          'Identifier les bennes et conteneurs de tri disponibles',
+          'Verifier que les dechets dangereux sont separes',
+          'S\'assurer que les produits chimiques ont leurs fiches de donnees',
+          'Controler l\'etat de la zone de stockage des dechets'
+        ],
+        nonConformityQuestion:'Un melange de dechets ou un stockage inapproprie a-t-il ete constate ?',
+        nonConformityYes:{
+          title:'Non-conformite de tri constatee',
+          message:'Procedez au re-tri immediat des dechets mal orientes. Le melange de dechets dangereux et banals est interdit par la reglementation. Une amende peut etre appliquee.',
+          type:'warn',
+          actions:[
+            'Separer les dechets melanges',
+            'Identifier et corriger la cause du mauvais tri',
+            'Rappeler les consignes de tri a toute l\'equipe'
+          ]
+        },
+        nonConformityNo:{
+          title:'Tri selectif conforme',
+          message:'Tous les dechets sont correctement tries et stockes. Merci de maintenir ce bon geste pour l\'environnement.',
+          type:'good',
+          actions:[]
+        }
+      },
+      {
+        id:'pollution-produits',
+        label:'Pollution et gestion des produits dangereux',
+        checks:[
+          'Verifier le stockage des produits dangereux (rétention, etanchéité)',
+          'Controler l\'etat des kits anti-pollution sur le chantier',
+          'S\'assurer que les produits sont dans leurs emballages d\'origine',
+          'Verifier la presence des fiches de donnees de securite'
+        ],
+        nonConformityQuestion:'Un risque de pollution ou un produit dangereux mal stocke a-t-il ete identifie ?',
+        nonConformityYes:{
+          title:'Risque de pollution identifie',
+          message:'Isolez immediatement la zone. Les produits dangereux doivent etre stockes sur bac de retention. Prevenez le responsable environnement.',
+          type:'warn',
+          actions:[
+            'Mettre en place un bac de retention',
+            'Utiliser le kit anti-pollution si necessaire',
+            'Signaler l\'incident au responsable environnement'
+          ]
+        },
+        nonConformityNo:{
+          title:'Stockage conforme',
+          message:'Les produits dangereux sont correctement stockes. Continuez a respecter les consignes environnementales.',
+          type:'good',
+          actions:[]
+        }
+      }
+    ]
+  },
+  'Sante':{
+    label:'Sante',
+    icon:'❤️',
+    topics:[
+      {
+        id:'gestes-postures',
+        label:'Gestes et postures pour la manutention manuelle',
+        checks:[
+          'Identifier les charges lourdes a deplacer dans la journee',
+          'Verifier la disponibilite d\'aides mecaniques (transpalette, diable)',
+          'S\'assurer que les gestes de levage sont expliques a l\'equipe',
+          'Reperer les zones de circulation obstruces par des charges'
+        ],
+        nonConformityQuestion:'Un geste dangereux ou une charge trop lourde a ete observe ?',
+        nonConformityYes:{
+          title:'Risque TMS ou blessure identifie',
+          message:'Ne soulevez jamais une charge sans aide mecanique si elle depasse 25 kg. Rappelez les bons gestes : dos droit, jambes flechies, charge pres du corps.',
+          type:'warn',
+          actions:[
+            'Utiliser un transpalette ou un chariot',
+            'Former aux gestes et postures si necessaire',
+            'Diviser la charge en plusieurs voyages'
+          ]
+        },
+        nonConformityNo:{
+          title:'Postures et gestes adaptes',
+          message:'Les bonnes pratiques de manutention sont respectees. Continuez ainsi pour preserver votre dos.',
+          type:'good',
+          actions:[]
+        }
+      },
+      {
+        id:'nuisances-sonores',
+        label:'Nuisances sonores et protection auditive',
+        checks:[
+          'Identifier les sources de bruit eleve sur le chantier',
+          'Verifier la disponibilite des protections auditives (bouchons, casques)',
+          'S\'assurer que les protections sont portees dans les zones bruyantes',
+          'Controler le niveau sonore avec un sonometre si disponible'
+        ],
+        nonConformityQuestion:'Un niveau sonore dangereux ou un defaut de protection a-t-il ete constate ?',
+        nonConformityYes:{
+          title:'Exposition au bruit excessive',
+          message:'Portez obligatoirement des protections auditives dans les zones a plus de 85 dB. Une exposition prolongee sans protection entraine des sequelles irreversibles.',
+          type:'warn',
+          actions:[
+            'Distribuer des protections auditives adaptees',
+            'Baliser les zones bruyantes',
+            'Limiter le temps d\'exposition par rotation des equipes'
+          ]
+        },
+        nonConformityNo:{
+          title:'Nuisances sonores matrisees',
+          message:'Les protections sont portees et le niveau sonore est acceptable. Restez attentifs aux nouveaux engins bruyants.',
+          type:'good',
+          actions:[]
+        }
+      }
+    ]
+  },
+  'Surete':{
+    label:'Surete',
+    icon:'🔒',
+    topics:[
+      {
+        id:'controle-acces',
+        label:'Controle d\'acces et circulation sur le chantier',
+        checks:[
+          'Verifier que les acces chantier sont fermes et securises',
+          'Controler le port du badge ou de la carte d\'identification',
+          'S\'assurer que la signalisation des zones interdites est visible',
+          'Verifier le registre d\'acces et de presence'
+        ],
+        nonConformityQuestion:'Un acces non autorise ou un defaut de signalisation a-t-il ete constate ?',
+        nonConformityYes:{
+          title:'Defaut de controle d\'acces',
+          message:'Toute personne non identifiee doit etre raccompagnee a l\'entree. Renforcez la surveillance et verifiez les points d\'acces.',
+          type:'warn',
+          actions:[
+            'Raccompagner la personne non autorisee',
+            'Verrouiller les acces secondaires',
+            'Informer le responsable surete du chantier'
+          ]
+        },
+        nonConformityNo:{
+          title:'Acces et circulation conformes',
+          message:'Les acces sont securises et la signalisation est en place. Maintenez cette vigilance tout au long du chantier.',
+          type:'good',
+          actions:[]
+        }
+      },
+      {
+        id:'vol-intrusion',
+        label:'Prevention du vol et des intrusions',
+        checks:[
+          'Verifier la fermeture des containers et des zones de stockage',
+          'Controler l\'inventaire du petit outillage en fin de journee',
+          'S\'assurer que le systeme de surveillance ou d\'eclairage fonctionne',
+          'Verifier que les vehicules de chantier sont bien stationnes et fermes'
+        ],
+        nonConformityQuestion:'Un vol ou une tentative d\'intrusion a-t-elle ete constatee recemment ?',
+        nonConformityYes:{
+          title:'Incident de securite signale',
+          message:'Portez plainte aupres des autorites si necessaire. Renforcez la surveillance et sensibilisez l\'equipe a la vigilance. Ne laissez jamais d\'outils sans surveillance.',
+          type:'warn',
+          actions:[
+            'Signaler l\'incident a la direction',
+            'Deposer plainte si materiel vole',
+            'Reviser le plan de surveillance nocturne'
+          ]
+        },
+        nonConformityNo:{
+          title:'Aucun incident a signaler',
+          message:'Tout est en ordre. Continuez a ranger et verrouiller le materiel chaque soir.',
+          type:'good',
+          actions:[]
+        }
+      }
+    ]
+  },
+  'Qualite':{
+    label:'Qualite',
+    icon:'✅',
+    topics:[
+      {
+        id:'conformite-travaux',
+        label:'Conformite des travaux en cours',
+        checks:[
+          'Verifier que les plans et documents techniques sont a jour',
+          'Controler la conformite des materiaux utilises',
+          'S\'assurer que les tolerances et cotes sont respectees',
+          'Verifier que les essais et controles prevus ont ete realises'
+        ],
+        nonConformityQuestion:'Un ecart de conformite a-t-il ete releve dans les travaux ?',
+        nonConformityYes:{
+          title:'Ecart de conformite constate',
+          message:'Ne poursuivez pas les travaux sans correction. L\'ecart doit etre documente et une fiche de non-conformite (FNC) doit etre ouverte.',
+          type:'warn',
+          actions:[
+            'Ouvrir une fiche de non-conformite (FNC)',
+            'Arreter les travaux dans la zone concernee',
+            'Proposer un plan d\'actions correctives'
+          ]
+        },
+        nonConformityNo:{
+          title:'Travaux conformes',
+          message:'Les travaux respectent les specifications et les normes en vigueur. Poursuivez avec la meme rigueur.',
+          type:'good',
+          actions:[]
+        }
+      },
+      {
+        id:'tracabilite',
+        label:'Tracabilite documentaire et reporting',
+        checks:[
+          'Verifier que les bons de livraison sont signes et classes',
+          'Controler la mise a jour du journal de chantier',
+          'S\'assurer que les photos de suivi sont prises et datees',
+          'Verifier que les PV d\'essais et controles sont archivés'
+        ],
+        nonConformityQuestion:'Un document manquant ou non renseigne a-t-il ete identifie ?',
+        nonConformityYes:{
+          title:'Documentation incomplete',
+          message:'Tout document manquant doit etre complete avant la fin de la journee. La tracabilite est obligatoire pour la reception des travaux.',
+          type:'warn',
+          actions:[
+            'Reunir les documents manquants',
+            'Mettre a jour le journal de chantier',
+            'Numeriser et archiver les documents'
+          ]
+        },
+        nonConformityNo:{
+          title:'Tracabilite conforme',
+          message:'Tous les documents sont renseignes et classes. La tracabilite est essentielle pour la qualite et la conformite legale du chantier.',
+          type:'good',
+          actions:[]
+        }
+      }
+    ]
+  },
+  'Autre':{
+    label:'Autre',
+    icon:'📋',
+    topics:[]
+  }
+};
+
+async function api(url,o){return fetch(API+url,{headers:{'Content-Type':'application/json'},...(o||{}),body:o&&o.body?JSON.stringify(o.body):undefined}).then(r=>r.json())}
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2000)}
+
+async function login(){
+  var e=document.getElementById('login-email').value.trim().toLowerCase();
+  if(!e||!e.includes('@')){toast('Email invalide');return}
+  var b=document.querySelector('.login-card .btn');b.textContent='Connexion...';b.disabled=true;
+  await api('/api/login',{method:'POST',body:{email:e}});
+  user=e;localStorage.setItem('user',e);
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app-main').style.display='block';
+  document.getElementById('hdr-email').textContent=e.split('@')[0];
+  document.getElementById('prof-email').textContent=e;
+  await loadData();
+  document.getElementById('hdr-badge')&&(document.getElementById('hdr-badge').textContent='('+causeries.length+')');
+  toast('Connecte — '+causeries.length+' causeries');
+  b.textContent='Se connecter';b.disabled=false;
+  loadProfile();
+  loadImpBadge();
+}
+window.login=login;
+
+async function loadData(){
+  if(!user)return;
+  var p=await api('/api/profil/'+encodeURIComponent(user));
+  if(p.ok){pCh=p.chantiers;pP=p.participants;
+    document.getElementById('ch-list').innerHTML=pCh.map(c=>'<option value="'+c.replace(/"/g,'&quot;')+'">').join('');
+    document.getElementById('parts-list')&&(document.getElementById('parts-list').innerHTML=pP.map(n=>'<option value="'+n.replace(/"/g,'&quot;')+'">').join(''));
+    fillAllParts(pP);
+    if(pCh.length) document.getElementById('ch-inp').value=pCh[0];
+  }
+  var d=await api('/api/causeries/'+encodeURIComponent(user));
+  if(d.ok)causeries=d.causeries;else causeries=[];
+  renderHistory();renderStats();updateBadges();
+}
+
+async function loadDataSilent(){
+  try{if(!user)return;
+  var [p,d]=await Promise.all([api('/api/profil/'+encodeURIComponent(user)),api('/api/causeries/'+encodeURIComponent(user))]);
+  if(p.ok){pCh=p.chantiers;pP=p.participants;document.getElementById('ch-list').innerHTML=pCh.map(c=>'<option value="'+c.replace(/"/g,'&quot;')+'">').join('');}
+  if(d.ok)causeries=d.causeries;renderHistory();renderStats();updateBadges();
+  }catch(e){}
+}
+
+function logout(){if(!confirm('Se déconnecter ?'))return;user=null;localStorage.removeItem('user');document.getElementById('app-main').style.display='none';document.getElementById('login-screen').style.display='flex';closeProfile()}
+window.logout=logout;
+
+function showProfile(){
+  document.getElementById('prof-email').textContent=user;
+  var chE=document.getElementById('prof-ch');document.getElementById('prof-ch-nb').textContent=pCh.length;
+  chE.innerHTML=pCh.length?pCh.map(c=>'<div class="profile-item"><span class="name">'+c+'</span><button class="del" onclick="delCh(\''+c.replace(/'/g,"\\'")+'\')">Suppr</button></div>').join(''):'<p style="color:#94a3b8;font-size:13px">Aucun chantier</p>';
+  var pE=document.getElementById('prof-p');document.getElementById('prof-p-nb').textContent=pP.length;
+  pE.innerHTML=pP.length?pP.map(n=>'<div class="profile-item"><span class="name">'+n+'</span><button class="del" onclick="delP(\''+n.replace(/'/g,"\\'")+'\')">Suppr</button></div>').join(''):'<p style="color:#94a3b8;font-size:13px">Aucun participant</p>';
+  document.getElementById('profile-modal').classList.add('show');
+  loadShares()
+}
+window.showProfile=showProfile;
+function closeProfile(){document.getElementById('profile-modal').classList.remove('show')}
+window.closeProfile=closeProfile;
+
+async function delCh(n){
+  if(!confirm('Supprimer "'+n+'" ?'))return;
+  await api('/api/chantiers/'+encodeURIComponent(user)+'?name='+encodeURIComponent(n),{method:'DELETE'});
+  pCh=pCh.filter(c=>c!==n);document.getElementById('ch-list').innerHTML=pCh.map(c=>'<option value="'+c.replace(/"/g,'&quot;')+'">').join('');showProfile();toast('Supprime')
+}
+window.delCh=delCh;
+async function delP(n){
+  if(!confirm('Supprimer '+n+' ?'))return;
+  await api('/api/participants/'+encodeURIComponent(user)+'?name='+encodeURIComponent(n),{method:'DELETE'});
+  pP=pP.filter(x=>x!==n);var pel=document.getElementById('parts-list');if(pel)pel.innerHTML=pP.map(x=>'<option value="'+x.replace(/"/g,'&quot;')+'">').join('');showProfile();toast('Supprime')
+}
+window.delP=delP;
+
+// ============ PARTAGES ============
+async function loadShares(){
+  if(!user)return;
+  var r=await api('/api/shares/'+encodeURIComponent(user));
+  if(!r.ok)return;
+  var el=document.getElementById('prof-sh');
+  var nb=document.getElementById('prof-sh-nb');
+  var shares=r.shares||[];
+  nb.textContent=shares.length;
+  el.innerHTML=shares.length?shares.map(function(s){
+    var dir=user===s.owner_email?'Envoye a ':'Recu de ';
+    var other=user===s.owner_email?s.shared_with_email:s.owner_email;
+    return '<div class="profile-item"><span class="name" style="font-size:12px">'+dir+other+' &mdash; '+s.chantier+'</span><button class="del" onclick="delShare('+s.id+')">Suppr</button></div>';
+  }).join(''):'<p style="color:#94a3b8;font-size:13px">Aucun partage</p>';
+  var sel=document.getElementById('share-chantier');
+  sel.innerHTML=pCh.map(function(c){return '<option value="'+c.replace(/"/g,'&quot;')+'">'+c+'</option>'}).join('');
+}
+async function addShare(){
+  var sharedWith=document.getElementById('share-email').value.trim().toLowerCase();
+  var chantier=document.getElementById('share-chantier').value;
+  if(!sharedWith||!sharedWith.includes('@')){toast('Email valide requis');return}
+  if(!chantier){toast('Selectionnez un chantier');return}
+  var r=await api('/api/shares',{method:'POST',body:{owner:user,shared_with:sharedWith,chantier:chantier}});
+  if(r.ok){toast('Chantier partage !');loadShares()}else{toast('Erreur: '+(r.error||'?'))}
+}
+window.addShare=addShare;
+async function delShare(id){
+  if(!confirm('Supprimer ce partage ?'))return;
+  var r=await api('/api/shares/'+id,{method:'DELETE'});
+  if(r.ok){loadShares();toast('Partage supprime')}else{toast('Erreur')}
+}
+window.delShare=delShare;
+
+// ============ PHOTOS ============
+function resizePhoto(file,maxW){
+  return new Promise(function(resolve){
+    var reader=new FileReader();
+    reader.onload=function(e){
+      var img=new Image();
+      img.onload=function(){
+        var w=img.width,h=img.height;
+        if(w>maxW){h=h*maxW/w;w=maxW}
+        var c=document.createElement('canvas');
+        c.width=w;c.height=h;
+        var ctx=c.getContext('2d');
+        ctx.drawImage(img,0,0,w,h);
+        resolve(c.toDataURL('image/jpeg',0.7));
+      };
+      img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+async function uploadPhoto(input){
+  var file=input.files[0];
+  if(!file)return;
+  if(file.size>5*1024*1024){toast('Photo trop volumineuse (max 5MB)');return}
+  var data=await resizePhoto(file,800);
+  if(!did){toast('Enregistrez d abord la causerie');return}
+  var r=await api('/api/causeries/'+did+'/photos',{method:'POST',body:{data:data,caption:''}});
+  if(r.ok){toast('Photo ajoutee !');loadPhotos(did)}else{toast('Erreur: '+(r.error||'?'))}
+  input.value='';
+}
+window.uploadPhoto=uploadPhoto;
+async function loadPhotos(cid){
+  var el=document.getElementById('photos-display');
+  try{
+    var r=await api('/api/causeries/'+cid+'/photos');
+    if(!r.ok||!r.photos.length){el.innerHTML='';return}
+    el.innerHTML='<div style="font-size:12px;color:#64748b;margin-bottom:6px;font-weight:600">PHOTOS</div><div class="photos-carousel">'+r.photos.map(function(p){
+      return '<div class="photo-item"><button class="del-photo" onclick="delPhoto('+p.id+')">x</button><img src="'+p.data+'" alt="'+p.caption+'">'+(p.caption?'<div class="cap">'+p.caption+'</div>':'')+'</div>';
+    }).join('')+'</div>';
+  }catch(e){el.innerHTML=''}
+}
+async function delPhoto(pid){
+  if(!confirm('Supprimer cette photo ?'))return;
+  var r=await api('/api/photos/'+pid,{method:'DELETE'});
+  if(r.ok){if(did)loadPhotos(did);toast('Photo supprimee')}
+}
+window.delPhoto=delPhoto;
+
+// THEMES (mode libre = multi, mode guide = unique + cache Autre)
+function showAutreBtn(v){var el=document.querySelector('.theme-btn[data-t=Autre]');if(el)el.style.display=v?'':'none'}
+
+document.getElementById('theme-grid').addEventListener('click',function(e){
+  var b=e.target.closest('.theme-btn');if(!b)return;
+  if(curMode==='guide'){
+    // Guide: selection unique, pas de Autre
+    if(b.dataset.t==='Autre'){setMode('libre');b.classList.add('active');return}
+    if(b.classList.contains('active'))return;
+    document.querySelectorAll('.theme-btn').forEach(function(btn){btn.classList.remove('active')});
+    b.classList.add('active');
+    renderGuides();
+  } else {
+    // Libre: multi-select
+    b.classList.toggle('active');
+  }
+});
+function getThemes(){return[...document.querySelectorAll('.theme-btn.active')].map(b=>b.dataset.t)}
+
+// MODE
+var curMode='guide';
+function setMode(m){
+  curMode=m;
+  var lb=document.getElementById('mode-libre'), gb=document.getElementById('mode-guide');
+  if(m==='libre'){
+    lb.className='mode-btn active';gb.className='mode-btn inactive';
+    document.getElementById('libre-block').style.display='block';document.getElementById('guide-block').style.display='none';
+    showAutreBtn(true);
+  } else {
+    gb.className='mode-btn active';lb.className='mode-btn inactive';
+    document.getElementById('libre-block').style.display='none';document.getElementById('guide-block').style.display='block';
+    showAutreBtn(false);
+    // En mode guide: forcer 1 seul theme guide, retirer Autre
+    var actives=document.querySelectorAll('.theme-btn.active');
+    if(actives.length>1||document.querySelector('.theme-btn.active[data-t=Autre]')){
+      var firstGuide=document.querySelector('.theme-btn[data-t=Securite],.theme-btn[data-t=Environnement],.theme-btn[data-t=Sante],.theme-btn[data-t=Surete],.theme-btn[data-t=Qualite]');
+      document.querySelectorAll('.theme-btn').forEach(function(btn){btn.classList.toggle('active',btn===firstGuide)});
+    }
+    renderGuides();
+  }
+}
+window.setMode=setMode;
+
+function renderGuides(){
+  var themes=getThemes(),list=document.getElementById('guide-list');
+  var gk=themes.find(t=>GUIDES[t]);
+  if(!gk){list.innerHTML='<p style="color:#94a3b8;font-size:13px">Pas de guide pour ce domaine</p>';return}
+  var g=GUIDES[gk];
+  list.innerHTML=g.topics.map((t,i)=>'<div class="guide-topic'+(i===0?' active':'')+'" data-id="'+t.id+'" onclick="pickG(\''+t.id+'\',this)">'+t.label+'</div>').join('');
+  guideTopic=gk;guideTopicId=g.topics[0].id;
+}
+window.renderGuides=renderGuides;
+
+function pickG(id,el){
+  guideTopicId=id;
+  document.querySelectorAll('.guide-topic').forEach(e=>e.classList.toggle('active',e.dataset.id===id));
+}
+window.pickG=pickG;
+
+// PARTS
+function addPart(n){
+  var c=document.getElementById('parts-c'),r=document.createElement('div');r.className='pr';
+  r.innerHTML='<input type="text" class="in part-in" placeholder="Nom" value="'+(n||'')+'" list="parts-list"><button class="pr-del" onclick="delPart(this)">x</button>';
+  c.appendChild(r);updPartsNb()
+}
+window.addPart=addPart;
+
+function delPart(b){
+  var c=document.getElementById('parts-c');
+  if(c.children.length<=1){toast('Min 1 participant');return}
+  b.closest('.pr').remove();updPartsNb()
+}
+window.delPart=delPart;
+
+function updPartsNb(){var n=document.querySelectorAll('.part-in').length;document.getElementById('parts-nb').textContent='('+n+')'}
+
+function getNames(){return[...document.querySelectorAll('.part-in')].map(i=>i.value.trim()).filter(n=>n)}
+
+function fillAllParts(names){
+  var c=document.getElementById('parts-c');c.innerHTML='';
+  if(names&&names.length){names.forEach(n=>{var r=document.createElement('div');r.className='pr';r.innerHTML='<input type="text" class="in part-in" placeholder="Nom" value="'+n.replace(/"/g,'&quot;')+'" list="parts-list"><button class="pr-del" onclick="delPart(this)">x</button>';c.appendChild(r)})}
+  else addPart();updPartsNb()
+}
+window.fillAllParts=fillAllParts;
+
+// FLOW
+function startFlow(){
+  var chantier=document.getElementById('ch-inp').value.trim(),themes=getThemes(),names=getNames();
+  if(!chantier){toast('Indique le chantier');return}
+  if(!names.length){toast('Ajoute un participant');return}
+  if(!themes.length){toast('Selectionne un theme');return}
+  
+  if(curMode==='libre'){
+    var notes=document.getElementById('notes-inp').value.trim();
+    startSigFlow(chantier,notes,themes,names);
+  } else {
+    if(!guideTopicId){toast('Selectionne un sujet guide');return}
+    var gk=themes.find(t=>GUIDES[t]);
+    if(!gk){toast('Aucun guide pour les themes selectionnes');return}
+    var g=GUIDES[gk],topic=g.topics.find(t=>t.id===guideTopicId);
+    if(!topic){toast('Sujet guide introuvable');return}
+    var notes=topic.label+'\n'+document.getElementById('notes-inp').value.trim();
+    startGuideFlow(chantier,notes,themes,names,gk,topic);
+  }
+}
+window.startFlow=startFlow;
+
+var wiz=null;
+
+function startGuideFlow(chantier,notes,themes,names,gk,topic){
+  wiz={chantier,notes,themes,names,gk,topic,checks:topic.checks.map(c=>({l:c,d:false})),step:'checks',hasIssues:false};
+  wizShow();
+}
+
+function wizShow(){
+  var w=document.getElementById('wizard');w.classList.add('show');
+  wizRender();
+}
+
+function wizRender(){
+  var s=wiz;
+  if(!s||!s.checks){wizClose();return}
+  var done=s.checks.filter(c=>c.d).length,total=s.checks.length;
+  document.getElementById('wiz-title').textContent='☐ '+s.gk+' ('+done+'/'+total+')';
+  document.getElementById('wiz-sub').textContent=s.topic.label+' &mdash; '+s.chantier;
+  document.getElementById('wiz-progress').style.width=(20+(done/total)*40)+'%';
+  
+  document.getElementById('wiz-body').innerHTML='<div class="wiz-label">Actions a verifier sur le terrain</div>'+
+    s.checks.map((c,i)=>'<div class="wiz-row'+(c.d?' done':'')+'" onclick="wizToggle('+i+')"><div class="check">'+(c.d?'&#10003;':'')+'</div><div class="txt">'+c.l+'</div></div>').join('');
+  
+  var allDone=done===total;
+  document.getElementById('wiz-btns').innerHTML='<button class="btn btn-secondary" onclick="wizClose()">Annuler</button>'+
+    (allDone?'<button class="btn btn-primary" onclick="wizAskNC()">Suite -></button>':'');
+}
+
+function wizToggle(i){
+  if(!wiz||!wiz.checks[i])return;
+  wiz.checks[i].d=!wiz.checks[i].d;wizRender()
+}
+window.wizToggle=wizToggle;
+
+function wizAskNC(){
+  var s=wiz;
+  document.getElementById('wiz-title').textContent='&#10067; Verification';
+  document.getElementById('wiz-sub').textContent=s.topic.nonConformityQuestion;
+  document.getElementById('wiz-progress').style.width='60%';
+  document.getElementById('wiz-body').innerHTML='<div style="display:flex;gap:8px;margin-top:8px"><button class="btn btn-warning" style="background:#fef3c7;color:#d97706;border:1px solid #fde68a" onclick="wizNC(true)">&#9888;&#65039; Oui, non-conformites</button><button class="btn btn-success" style="background:#dcfce7;color:#16a34a;border:1px solid #bbf7d0" onclick="wizNC(false)">&#10004;&#65039; Non, conforme</button></div>';
+  document.getElementById('wiz-btns').innerHTML='<button class="btn btn-secondary" onclick="wizClose()">Annuler</button>';
+}
+window.wizAskNC=wizAskNC;
+
+function wizNC(has){
+  var s=wiz;s.hasIssues=has;
+  var r=has?s.topic.nonConformityYes:s.topic.nonConformityNo;
+  document.getElementById('wiz-title').textContent=has?'&#9888;&#65039; Non-conformites':'&#10004;&#65039; Conforme';
+  document.getElementById('wiz-progress').style.width='80%';
+  var act=r.actions.length?'<div class="wiz-label" style="margin-top:12px">Actions a mener</div>'+r.actions.map((a,i)=>'<div class="action-row"><span class="num">'+(i+1)+'</span>'+a+'</div>').join('') :'';
+  document.getElementById('wiz-body').innerHTML='<div class="result-banner '+(has?'warn':'good')+'"><div class="icon">'+(has?'&#9888;&#65039;':'&#10004;&#65039;')+'</div><h4>'+r.title+'</h4><p>'+r.message+'</p></div>'+act;
+  document.getElementById('wiz-btns').innerHTML='<button class="btn btn-primary" onclick="wizDone()">Lancer les signatures</button><button class="btn btn-secondary" onclick="wizClose()">Annuler</button>';
+}
+window.wizNC=wizNC;
+
+function wizDone(){
+  var s=wiz;wizClose();
+  startSigFlow(s.chantier,s.notes,s.themes,s.names,s.topic,s.hasIssues,s.checks,s.gk);
+}
+window.wizDone=wizDone;
+
+function wizClose(){
+  document.getElementById('wizard').classList.remove('show');wiz=null
+}
+window.wizClose=wizClose;
+
+// SIGNATURES
+function startSigFlow(chantier,notes,themes,names,topic,hasNC,checks,gk){
+  sigQ=names.map(n=>({name:n,role:'p'}));sigQ.push({name:user.split('@')[0],role:'a'});
+  sigI=0;sigParts=[];sigAnim=null;
+  sigData={chantier,notes:topic?notes:(notes||''),themes};
+  if(topic){
+    var ncData=hasNC?topic.nonConformityYes:topic.nonConformityNo;
+    sigData.guide_data={
+      topic_id:topic.id,
+      topic_label:topic.label,
+      theme:gk,
+      checks:(checks||[]).map(function(c){return{label:c.l,done:c.d}}),
+      has_issues:hasNC,
+      non_conformity:{title:ncData.title,message:ncData.message,type:ncData.type,actions:ncData.actions}
+    };
+  }
+  showSig();
+}
+
+function showSig(){
+  if(sigI>=sigQ.length){endSig();return}
+  var item=sigQ[sigI];
+  document.getElementById('sig-name').textContent=item.name;
+  document.getElementById('sig-role').textContent=item.role==='a'?'Animateur (vous) &mdash; '+(sigI+1)+'/'+sigQ.length:'Participant '+(sigI+1)+'/'+sigQ.length;
+  document.getElementById('sig-sign').style.display='block';document.getElementById('sig-done').style.display='none';
+  var c=document.getElementById('sig-canvas'),w=document.getElementById('sig-cw');
+  c.width=w.offsetWidth||400;c.height=w.offsetHeight||200;
+  var ctx=c.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,c.width,c.height);ctx.strokeStyle='#1e293b';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';
+  var dr=false,lx,ly;
+  function gp(e){var r=c.getBoundingClientRect(),t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)*(c.width/r.width),y:(t.clientY-r.top)*(c.height/r.height)}}
+  function sd(e){e.preventDefault();dr=true;var p=gp(e);lx=p.x;ly=p.y}
+  function drr(e){e.preventDefault();if(!dr)return;var p=gp(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.stroke();lx=p.x;ly=p.y}
+  function sp(){dr=false}
+  c.addEventListener('mousedown',sd);c.addEventListener('mousemove',drr);c.addEventListener('mouseup',sp);c.addEventListener('mouseleave',sp);
+  c.addEventListener('touchstart',sd,{passive:false});c.addEventListener('touchmove',drr,{passive:false});c.addEventListener('touchend',sp);
+  if(window._sc)window._sc();
+  window._sc=()=>{c.removeEventListener('mousedown',sd);c.removeEventListener('mousemove',drr);c.removeEventListener('mouseup',sp);c.removeEventListener('mouseleave',sp);c.removeEventListener('touchstart',sd);c.removeEventListener('touchmove',drr);c.removeEventListener('touchend',sp)};
+  document.getElementById('sig-overlay').classList.add('show');
+}
+
+function sigClear(){
+  var c=document.getElementById('sig-canvas'),ctx=c.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,c.width,c.height)
+}
+window.sigClear=sigClear;
+
+function sigNext(){
+  var c=document.getElementById('sig-canvas'),ctx=c.getContext('2d'),d=ctx.getImageData(0,0,c.width,c.height);
+  for(var i=3;i<d.data.length;i+=4){if(d.data[i]){break}}
+  if(i>=d.data.length){toast('Signez avant de valider');return}
+  var tc=document.createElement('canvas');tc.width=200;tc.height=60;
+  var tctx=tc.getContext('2d');tctx.fillStyle='white';tctx.fillRect(0,0,200,60);tctx.drawImage(c,0,0,200,60);
+  var url=tc.toDataURL('image/jpeg',0.5),item=sigQ[sigI];
+  if(item.role==='a')sigAnim=url;else sigParts.push({name:item.name,signature:url});
+  document.getElementById('sig-sign').style.display='none';document.getElementById('sig-done').style.display='block';
+  document.getElementById('sig-done-name').textContent=item.name;
+  if(window._sc)window._sc();
+  setTimeout(function(){sigI++;if(sigI>=sigQ.length)endSig();else showSig()},700)
+}
+window.sigNext=sigNext;
+
+async function endSig(){
+  try{
+    var body={email:user,chantier:sigData.chantier,themes:sigData.themes,notes:sigData.notes,participants:sigParts,animateur_signature:sigAnim};
+    if(sigData.guide_data) body.guide_data=JSON.stringify(sigData.guide_data);
+    var r=await api('/api/causeries',{method:'POST',body:body});
+    if(r.ok){
+      sigClose();
+      if(sigData.chantier && !pCh.includes(sigData.chantier)) pCh.unshift(sigData.chantier);
+      sigParts.forEach(p => {if(p.name && !pP.includes(p.name)) pP.push(p.name)});
+      clearForm();
+      causeries.unshift({id:r.id,animateur:user,chantier:sigData.chantier,themes:sigData.themes,notes:sigData.notes,participants:sigParts,date_label:r.date_label,animateur_signature:sigAnim});
+      renderHistory();renderStats();updateBadges();
+      setTimeout(function(){showPage('history')},300);
+      toast('Causerie enregistree !');
+      loadDataSilent();
+    }else{toast('Erreur: '+(r.error||'?'));sigClose()}
+  }catch(e){toast('Erreur reseau');sigClose()}
+}
+
+function sigClose(){document.getElementById('sig-overlay').classList.remove('show');if(window._sc)window._sc()}
+
+function clearForm(){
+  document.getElementById('notes-inp').value='';
+  document.querySelectorAll('.theme-btn').forEach(function(b,i){b.classList.toggle('active',i===0)});
+  if(!document.getElementById('ch-inp').value && pCh.length) document.getElementById('ch-inp').value=pCh[0];
+  fillAllParts(pP);
+  if(curMode!=='guide')setMode('guide');else renderGuides();
+}
+
+// HISTORY
+// ===== RENDER HISTORY =====
+function renderHistory(){
+  var l=document.getElementById('h-list'),c=document.getElementById('h-cnt');
+  if(!causeries.length){l.innerHTML='<div class="empty"><div class="icon">📋</div><p>Aucune causerie</p></div>';c.textContent='';return}
+  c.textContent=causeries.length+' causerie'+(causeries.length>1?'s':'');
+  l.innerHTML=causeries.map(ca=>{
+    var th=(ca.themes||[]).map(t=>'<span class="tag">'+t+'</span>').join('');
+    var st=ca.status||'pending';
+    var borderColor=st==='validated'?'#16a34a':(st==='rejected'?'#dc2626':'#f59e0b');
+    var statusTag=st==='validated'?'<span style="display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600;color:#fff;background:#16a34a;margin-left:auto">Validé</span>'
+      :(st==='rejected'?'<span style="display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600;color:#fff;background:#dc2626;margin-left:auto">Rejeté</span>'
+        :'<span style="display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600;color:#fff;background:#f59e0b;margin-left:auto">En attente</span>');
+    return '<div class="ci" onclick="showDetail(\''+ca.id+'\')" style="border-left:4px solid '+borderColor+';padding-left:12px">'+
+      '<div style="display:flex;align-items:center;gap:6px"><div class="ci-date">'+(ca.date_label||'')+'</div>'+statusTag+'</div>'+
+      '<div class="ci-chantier">'+(ca.chantier||'')+'</div>'+
+      '<div class="ci-themes">'+th+'</div>'+
+      '<div class="ci-parts">'+((ca.participants||[]).length)+' participant'+((ca.participants||[]).length>1?'s':'')+'</div></div>'
+  }).join('')
+}
+
+function showDetail(c) {
+  if(typeof c==='string'){c=causeries.find(x=>x.id===c);if(!c)return}
+  if(!c||!c.id) return;
+  var el=document.getElementById('detail-c');
+  var parts=c.participants||[];
+  var themes=(c.themes||[]).map(function(t){return '<span class="tag">'+esc(t)+'</span>'}).join(' ');
+  var partsHtml=parts.map(function(p){
+    return '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f1f5f9"><span>'+(typeof p==='string'?p:p.name||'')+'</span>'+
+      ((typeof p!=='string'&&p.signature)?'<span style="color:#16a34a">&#9989; Signé</span>':'<span style="color:#94a3b8">—</span>')+'</div>'
+  }).join('');
+  
+  var status=c.status||'pending';
+  var statusBadge='';
+  if(status==='validated') statusBadge='<div class="result-banner good" style="margin-bottom:10px;padding:8px 12px"><span style="font-size:14px">✅ Causerie validée par le Service Prévention</span>'+(c.validated_notes?'<p style="font-size:12px;margin-top:4px;color:#166534">Note: '+esc(c.validated_notes)+'</p>':'')+'</div>';
+  else if(status==='rejected') statusBadge='<div class="result-banner warn" style="margin-bottom:10px;padding:8px 12px"><span style="font-size:14px">❌ Causerie rejetée</span>'+(c.validated_notes?'<p style="font-size:12px;margin-top:4px;color:#92400e">Motif: '+esc(c.validated_notes)+'</p>':'')+'</div>'+
+    '<button class="btn btn-secondary btn-sm" style="margin-top:6px;width:auto" onclick="resubmitCauserie(\''+c.id+'\')">🔄 Reprendre et re-soumettre</button>';
+  else statusBadge='<div class="result-banner" style="margin-bottom:10px;padding:8px 12px;background:#f8fafc;border:1px solid #e2e8f0"><span style="font-size:14px;color:#64748b">⏳ En attente de validation</span></div>';
+  
+  el.innerHTML=statusBadge+
+    '<div class="dl"><span class="dl-l">Chantier</span><span class="dl-v">'+esc(c.chantier)+'</span></div>'+
+    '<div class="dl"><span class="dl-l">Date</span><span class="dl-v">'+(c.date_label||'')+'</span></div>'+
+    '<div class="dl"><span class="dl-l">Animateur</span><span class="dl-v">'+esc(c.animateur||c.email||'')+'</span></div>'+
+    '<div class="dl"><span class="dl-l">Thèmes</span><span class="dl-v">'+themes+'</span></div>'+
+    (c.notes?'<div class="dl"><span class="dl-l">Notes</span><span class="dl-v dl-notes">'+esc(c.notes)+'</span></div>':'')+
+    '<div class="dl"><span class="dl-l">Participants</span><span class="dl-v dl-parts">'+partsHtml+'</span></div>'+
+    '<div id="plans-in-detail"></div>';
+  
+  // Charger les plans d'action
+  loadPlansForDetail(c.id);
+  did=c.id;
+  
+  // Guide data display
+  if(c.guide_data){
+    var gd=c.guide_data;
+    var checkHtml=gd.checks.map(function(ch){return'<div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:13px"><span>'+(ch.done?'&#9989;':'&#10060;')+'</span><span>'+ch.label+'</span></div>'}).join('');
+    var nc=gd.non_conformity||{};
+    var confIcon=gd.has_issues?'&#10060;':'&#9989;';
+    var confClass=gd.has_issues?'warn':'good';
+    el.innerHTML+='<div style="margin-top:12px;padding-top:10px;border-top:1px solid #e2e8f0"><div style="font-size:12px;color:#94a3b8;font-weight:600;margin-bottom:6px">&#127919; GUIDE — '+gd.topic_label+'</div>'+
+      '<div style="font-size:12px;color:#94a3b8;font-weight:600;margin-bottom:4px">CHECKLIST TERRAIN</div>'+checkHtml+
+      '<div style="font-size:12px;color:#94a3b8;font-weight:600;margin-top:8px;margin-bottom:4px">CONFORMITE</div>'+
+      '<div class="result-banner '+confClass+'" style="padding:10px;margin-bottom:0"><div style="font-size:14px;font-weight:600">'+confIcon+' '+nc.title+'</div><p style="font-size:12px;margin-top:4px">'+nc.message+'</p></div>';
+    if(gd.has_issues&&nc.actions&&nc.actions.length){
+      el.innerHTML+='<div style="font-size:12px;color:#94a3b8;font-weight:600;margin-top:8px;margin-bottom:4px">ACTIONS A MENER</div>'+
+        nc.actions.map(function(a,i){return'<div class="action-row" style="margin-bottom:4px;padding:8px 10px"><span class="num">'+(i+1)+'</span>'+a+'</div>'}).join('');
+    }
+    el.innerHTML+='</div>';
+  }
+  
+  // QR Code display
+  loadQRCode(c.id);
+  // Photos display
+  loadPhotos(c.id);
+  document.getElementById('detail-modal').classList.add('show')
+}
+window.showDetail=showDetail;
+
+async function resubmitCauserie(cid){
+  if(!user){toast('Connectez-vous');return}
+  if(!confirm('Reprendre cette causerie ? Son statut repassera en "En attente" pour une nouvelle validation.'))return;
+  var r=await api('/api/causeries/'+cid+'/resubmit',{method:'PUT',body:{email:user}});
+  if(r.ok){toast('✅ Causerie re-soumise');closeModal();renderHistory()}
+  else toast('Erreur: '+(r.error||''));
+}
+window.resubmitCauserie=resubmitCauserie;
+
+async function loadPlansForDetail(cid){
+  var el=document.getElementById('plans-in-detail');
+  if(!el)return;
+  try{
+    var r=await api('/api/action-plans?causerie_id='+encodeURIComponent(cid)+'&email='+encodeURIComponent(user||''));
+    if(!r.ok||!r.plans||r.plans.length===0){el.innerHTML='';return}
+    var html='<div class="card-title" style="margin-top:12px;font-size:14px">&#128203; Plans d\'action</div>';
+    for(var p of r.plans){
+      var pCls=p.priority==='haute'?'high':'normal';
+      var statCls=p.status==='open'?'amber':(p.status==='done'?'green':'red');
+      html+='<div class="plan-card '+pCls+'" style="margin-bottom:6px">'+
+        '<div class="plan-head"><strong>'+esc(p.title)+'</strong>'+
+        ' <span class="prev-badge '+statCls+'" style="font-size:10px">'+esc(p.status)+'</span>'+
+        (p.priority==='haute'?' <span class="plan-priority high">Haute</span>':'')+'</div>'+
+        (p.description?'<div style="font-size:12px;color:#475569;margin-top:2px">'+esc(p.description)+'</div>':'')+
+        (p.due_date?'<div style="font-size:11px;color:#94a3b8;margin-top:2px">Échéance: '+esc(p.due_date)+'</div>':'')+
+        '<button class="btn btn-ghost btn-sm" style="margin-top:4px;font-size:11px" onclick="showAnimateurPlan(\''+p.id+'\')">&#128172; Voir les commentaires</button>'+
+      '</div>';
+    }
+    el.innerHTML=html;
+  }catch(e){}
+}
+window.loadPlansForDetail=loadPlansForDetail;
+
+async function showAnimateurPlan(planId){
+  try{
+    var r=await api('/api/action-plans/'+planId+'/comments?email='+encodeURIComponent(user||''));
+    // Récupérer le plan
+    var allPlansResp=await api('/api/action-plans?email='+encodeURIComponent(user||''));
+    var plan=null;
+    if(allPlansResp.plans){
+      for(var p of allPlansResp.plans){if(p.id===planId){plan=p;break}}
+    }
+    if(!plan){plan={id:planId,title:'Plan d\'action',status:'open'}}
+    
+    var comments=r.comments||[];
+    var html='<div class="modal" style="position:relative;max-width:500px">'+
+      '<button onclick="closeModal()" class="modal-close">x</button>'+
+      '<h3>&#128172; '+esc(plan.title)+'</h3>';
+    
+    if(comments.length===0){
+      html+='<p style="color:#94a3b8;font-size:13px;margin:10px 0">Aucun commentaire</p>';
+    } else {
+      html+='<div style="margin:10px 0;max-height:300px;overflow-y:auto">';
+      for(var cm of comments){
+        html+='<div style="padding:8px;background:#f8fafc;border-radius:8px;margin-bottom:6px;border:1px solid #e9edf2">'+
+          '<div style="font-size:11px;color:#64748b;margin-bottom:2px"><strong>'+esc(cm.author_email.split('@')[0])+'</strong> · '+cm.created_at.split('T')[0]+'</div>'+
+          '<div style="font-size:13px;color:#1e293b">'+esc(cm.comment)+'</div></div>';
+      }
+      html+='</div>';
+    }
+    
+    html+='<div style="display:flex;gap:6px;margin-top:8px">'+
+      '<input type="text" id="anim-plan-in-'+planId+'" class="in" placeholder="Ajouter un message..." style="flex:1">'+
+      '<button class="btn btn-sm btn-primary" style="width:auto" onclick="sendAnimComment(\''+planId+'\')">Envoyer</button>'+
+    '</div></div>';
+    
+    showModal(html);
+  }catch(e){}
+}
+window.showAnimateurPlan=showAnimateurPlan;
+
+async function sendAnimComment(planId){
+  var inp=document.getElementById('anim-plan-in-'+planId);
+  if(!inp||!inp.value.trim())return;
+  var r=await api('/api/action-plans/'+planId+'/comments',{method:'POST',body:{email:user||'',comment:inp.value.trim()}});
+  if(r.ok){inp.value='';showAnimateurPlan(planId);toast('Message envoyé &#9989;')}
+  else toast('Erreur: '+(r.error||''));
+}
+window.sendAnimComment=sendAnimComment;
+
+// QR CODE function
+async function loadQRCode(id){
+  var el=document.getElementById('qr-display');
+  try{
+    var r=await fetch(API+'/api/qr/'+encodeURIComponent(id)).then(r=>r.json());
+    if(r.ok){
+      el.innerHTML='<div style="display:flex;align-items:center;gap:10px"><div style="flex-shrink:0"><img src="'+r.qr+'" style="width:90px;height:90px;border-radius:6px"></div><div style="text-align:left;font-size:12px;color:#64748b"><div style="font-weight:600;color:#1e3a5f">&#128279; Acces rapide</div><div>Scannez pour voir la causerie</div><div style="font-size:10px;margin-top:2px;word-break:break-all">http://164.132.47.10:8080?c='+id+'</div></div></div>';
+    } else {
+      el.innerHTML='';
+    }
+  } catch(e){
+    el.innerHTML='';
+  }
+}
+
+// EXPORT PDF function
+function exportPDF(){
+  if(!did){toast('Aucune causerie selectionnee');return}
+  window.open(API+'/api/export/'+encodeURIComponent(did),'_blank');
+}
+window.exportPDF=exportPDF;
+
+function closeModal(){document.getElementById('detail-modal').classList.remove('show');did=null}
+window.closeModal=closeModal;
+async function delCauserie(){if(!did||!user)return;var r=await api('/api/causeries/'+did+'?email='+encodeURIComponent(user),{method:'DELETE'});if(!r.ok){toast('Erreur: '+(r.error||'?'));return}closeModal();await loadData();toast('Supprimee')}
+window.delCauserie=delCauserie;
+
+function printDetail(){
+  if(!did){toast('Aucune causerie selectionnee');return}
+  window.open(API+'/api/export/'+encodeURIComponent(did),'_blank');
+}
+window.printDetail=printDetail;
+
+// STATS
+function renderStats(){
+  var el=document.getElementById('stats-c');
+  if(!causeries.length){el.innerHTML='<div class="card"><div class="card-title">Statistiques</div><div class="empty"><div class="icon">📊</div><p>Pas assez de donnees</p></div></div>';return}
+  var total=causeries.length,tc={},cc={},ps=new Set();
+  causeries.forEach(c=>{c.themes.forEach(t=>tc[t]=(tc[t]||0)+1);cc[c.chantier]=(cc[c.chantier]||0)+1;c.participants.forEach(p=>ps.add(typeof p==='string'?p:p.name))});
+  var tt=Object.entries(tc).sort((a,b)=>b[1]-a[1]),tch=Object.entries(cc).sort((a,b)=>b[1]-a[1]);
+  el.innerHTML='<div class="card"><div class="card-title">Statistiques</div><div class="sg"><div class="sc"><div class="num">'+total+'</div><div class="lbl">Causeries</div></div><div class="sc"><div class="num">'+Object.keys(cc).length+'</div><div class="lbl">Chantiers</div></div><div class="sc"><div class="num">'+ps.size+'</div><div class="lbl">Participants</div></div></div><div class="ss"><h4>Themes</h4>'+tt.map(([t,n])=>'<div class="sr"><span>'+t+'</span><span class="num">'+n+'</span></div>').join('')+'</div><div class="ss"><h4>Chantiers</h4>'+tch.slice(0,5).map(([c,n])=>'<div class="sr"><span>'+c+'</span><span class="num">'+n+'</span></div>').join('')+'</div></div>'
+}
+
+// CERTIFICATION
+async function renderCertification(){
+  var el=document.getElementById('cert-c');
+  if(!user){el.innerHTML='<div class="cert-card"><div class="empty"><p>Connectez-vous pour voir le tableau de bord</p></div></div>';return}
+  try{
+    var d=await api('/api/certification/'+encodeURIComponent(user));
+    if(!d.ok){el.innerHTML='<div class="cert-card"><div class="empty"><p>Erreur de chargement</p></div></div>';return}
+    if(d.total===0){el.innerHTML='<div class="cert-card"><div class="empty"><div class="icon">📋</div><p>Aucune causerie enregistree</p></div></div>';return}
+    
+    var conf=d.conformite;
+    var confIcon={'vert':'&#10004;&#65039;','orange':'&#9888;&#65039;','rouge':'&#128308;'}[conf.niveau]||'&#10067;';
+    
+    var maxCount=1;
+    if(d.par_mois.length){maxCount=Math.max.apply(null,d.par_mois.map(function(m){return m.count}))}
+    var bars=d.par_mois.map(function(m){
+      var pct=maxCount>0?(m.count/maxCount*100):0;
+      return '<div class="bar-row"><span class="bar-label">'+m.mois.slice(0,7)+'</span><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%"></div></div><span class="bar-count">'+m.count+'</span></div>';
+    }).join('');
+    
+    var chItems=Object.entries(d.chantiers).map(function(e){return '<div class="cert-item"><span>'+e[0]+'</span><span class="cnt">'+e[1]+'</span></div>'}).join('');
+    var thItems=Object.entries(d.themes).map(function(e){return '<div class="cert-item"><span>'+e[0]+'</span><span class="cnt">'+e[1]+'</span></div>'}).join('');
+    var der=d.derniere;
+    var derThemes=der.themes.map(function(t){return '<span class="tag">'+t+'</span>'}).join(' ');
+    
+    el.innerHTML='<div class="cert-card"><div class="title">&#128202; Tableau de bord Certification</div><div class="subtitle" style="font-size:12px;color:#94a3b8;margin-bottom:12px;margin-top:-8px">Sous-section 3 &mdash; Suivi des causeries</div>'+
+      '<div class="conformite-badge '+conf.niveau+'"><span class="dot"></span><span>'+confIcon+' '+conf.label+'</span></div>'+
+      '<div class="cert-grid">'+
+        '<div class="cert-stat"><div class="num">'+d.total+'</div><div class="lbl">Causeries</div></div>'+
+        '<div class="cert-stat"><div class="num">'+d.total_chantiers+'</div><div class="lbl">Chantiers</div></div>'+
+        '<div class="cert-stat"><div class="num">'+d.participants_uniques+'</div><div class="lbl">Participants uniques</div></div>'+
+      '</div>'+
+      (d.par_mois.length?'<div class="cert-section-title">Frequence par mois</div><div class="bar-chart">'+bars+'</div>':'')+
+      '<div class="cert-section-title">Repartition par chantier</div>'+chItems+
+      '<div class="cert-section-title">Repartition par theme</div>'+thItems+
+      '<div class="cert-section-title">Derniere causerie</div>'+
+      '<div class="cert-derniere"><div class="d">'+der.date_label+'</div><div class="c">'+der.chantier+'</div><div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">'+derThemes+'</div></div>'+
+      '<button class="btn btn-primary" onclick="exportCertification()" style="margin-top:14px">&#128196; Rapport certification</button>'+
+    '</div>';
+  }catch(e){
+    el.innerHTML='<div class="cert-card"><div class="empty"><p>Erreur: '+(e.message||'reseau')+'</p></div></div>';
+  }
+}
+window.renderCertification=renderCertification;
+
+function exportCertification(){
+  if(!user){toast('Connectez-vous d abord');return}
+  window.open(API+'/api/export-certification/'+encodeURIComponent(user),'_blank');
+}
+window.exportCertification=exportCertification;
+
+// ===== LOAD PROFILE =====
+async function loadProfile(){
+  if(!user)return;
+  try{
+    var r=await api('/api/profil/'+encodeURIComponent(user));
+    if(r.ok){
+      currentRole=r.role||'user';
+      var navBtn=document.getElementById('nav-prevention');
+      if(navBtn)navBtn.style.display=currentRole==='prevention'?'':'none';
+      if(currentRole==='prevention'){
+        document.querySelector('.header h1').textContent='1/4h Sécurité — Prévention';
+      }
+    }
+  }catch(e){}
+}
+window.loadProfile=loadProfile;
+
+// ===== DASHBOARD PRÉVENTION =====
+var currentRole = 'user';
+
+async function loadPreventionDashboard(){
+  var el=document.getElementById('prev-c');
+  el.innerHTML='<div style="text-align:center;padding:40px"><p>Chargement...</p></div>';
+  try {
+    // Charger toutes les causeries
+    var causeriesRes=await api('/api/admin/causeries?email='+encodeURIComponent(user));
+    var statsRes=await api('/api/admin/stats?email='+encodeURIComponent(user));
+    var plansRes=await api('/api/action-plans?email='+encodeURIComponent(user));
+    
+    if(!causeriesRes.ok||!statsRes.ok){el.innerHTML='<div class="card"><div class="empty"><p>Erreur de chargement</p></div></div>';return}
+    
+    renderPrevDashboard(el, causeriesRes, statsRes, plansRes);
+  } catch(e){el.innerHTML='<div class="card"><div class="empty"><p>Erreur: '+e.message+'</p></div></div>'}
+}
+
+function renderPrevDashboard(el, causeriesRes, statsRes, plansRes){
+  var causeries=causeriesRes.causeries||[];
+  var stats=statsRes;
+  var plans=plansRes.plans||[];
+  
+  // Stats du haut
+  var totalCauseries=stats.total||causeries.length;
+  var totalAnimateurs=stats.animateurs_uniques||0;
+  var plansOuverts=stats.plans_ouverts||plans.filter(p=>p.status==='open').length;
+  
+  var valides=causeries.filter(c=>(c.status||'pending')==='validated').length;
+  var rejetees=causeries.filter(c=>(c.status||'pending')==='rejected').length;
+  var enAttente=causeries.filter(c=>(c.status||'pending')==='pending').length;
+  var tauxConformite=totalCauseries>0?Math.round(valides/totalCauseries*100):0;
+  
+  // Filtrer
+  var filterStatus=document.getElementById('prev-filter-status');
+  var filterAnimateur=document.getElementById('prev-filter-animateur');
+  var fs=filterStatus?filterStatus.value:'all';
+  var fa=filterAnimateur?filterAnimateur.value:'all';
+  
+  var filtered=causeries;
+  if(fs!=='all')filtered=filtered.filter(c=>(c.status||'pending')===fs);
+  if(fa!=='all')filtered=filtered.filter(c=>c.email===fa);
+  
+  // Animateurs uniques pour le filtre
+  var animateurs=[...new Set(causeries.map(c=>c.email))];
+  
+  // Construire le HTML
+  var html='';
+  
+  // Bannière en-tête
+  html+='<div class="prev-header">'+
+    '<h2>🛡️ Dashboard Prévention</h2>'+
+    '<p>Monitoring des causeries — Service Prévention</p>'+
+  '</div>';
+  
+  // Stats cards
+  html+='<div class="prev-stats-grid">'+
+    '<div class="prev-stat-card"><div class="num">'+totalCauseries+'</div><div class="lbl">Causeries totales</div></div>'+
+    '<div class="prev-stat-card"><div class="num">'+totalAnimateurs+'</div><div class="lbl">Animateurs</div></div>'+
+    '<div class="prev-stat-card"><div class="num">'+tauxConformite+'%</div><div class="lbl">Conformité</div></div>'+
+    '<div class="prev-stat-card"><div class="num">'+plansOuverts+'</div><div class="lbl">Plans ouverts</div></div>'+
+  '</div>';
+  
+  // Mini stats status
+  html+='<div style="display:flex;gap:8px;margin-bottom:12px">'+
+    '<div class="prev-stat-card mini" style="flex:1;border-left:3px solid #f59e0b"><div class="num">'+enAttente+'</div><div class="lbl">En attente</div></div>'+
+    '<div class="prev-stat-card mini" style="flex:1;border-left:3px solid #16a34a"><div class="num">'+valides+'</div><div class="lbl">Validées</div></div>'+
+    '<div class="prev-stat-card mini" style="flex:1;border-left:3px solid #dc2626"><div class="num">'+rejetees+'</div><div class="lbl">Rejetées</div></div>'+
+  '</div>';
+  
+  // Section : plans d'action ouverts
+  var plansOuvertsList=plans.filter(p=>p.status==='open');
+  if(plansOuvertsList.length>0){
+    html+='<div class="card-title" style="margin-top:8px">⚠️ Plans d\'action ouverts</div>';
+    plansOuvertsList.slice(0,3).forEach(function(p){
+      var pCls=p.priority==='haute'?'high':'normal';
+      html+='<div class="plan-card '+pCls+'">'+
+        '<div class="plan-head"><strong>'+esc(p.title)+'</strong><span class="plan-priority '+pCls+'">'+p.priority+'</span></div>'+
+        (p.chantier?'<div class="plan-meta">Chantier: '+esc(p.chantier)+'</div>':'')+
+        (p.assigned_to?'<div class="plan-meta">Assigné à: '+esc(p.assigned_to)+'</div>':'')+
+        (p.due_date?'<div class="plan-meta">Échéance: '+p.due_date+'</div>':'')+
+        '<button class="btn btn-sm btn-secondary" style="margin-top:6px;width:auto" onclick="showPlanDetail(\''+p.id+'\')">Voir le plan</button>'+
+      '</div>';
+    });
+    if(plansOuvertsList.length>3){
+      html+='<div style="text-align:center;margin-top:4px"><button class="btn btn-ghost" onclick="showAllPlans()">Voir tous les plans ('+plansOuvertsList.length+')</button></div>';
+    }
+  }
+  
+  // Filtres + tableau
+  html+='<div class="card-title" style="margin-top:8px">📋 Toutes les causeries</div>';
+  html+='<div class="prev-filter-bar">'+
+    '<select id="prev-filter-status" onchange="loadPreventionDashboard()">'+
+      '<option value="all">Tous statuts</option>'+
+      '<option value="pending" '+(fs==='pending'?'selected':'')+'>En attente</option>'+
+      '<option value="validated" '+(fs==='validated'?'selected':'')+'>Validées</option>'+
+      '<option value="rejected" '+(fs==='rejected'?'selected':'')+'>Rejetées</option>'+
+    '</select>'+
+    '<select id="prev-filter-animateur" onchange="loadPreventionDashboard()">'+
+      '<option value="all">Tous animateurs</option>'+
+      animateurs.map(function(a){return '<option value="'+a+'" '+(fa===a?'selected':'')+'>'+a.split('@')[0]+'</option>'}).join('')+
+    '</select>'+
+  '</div>';
+  
+  html+='<div style="overflow-x:auto">';
+  html+='<table class="prev-table">'+
+    '<thead><tr><th>Date</th><th>Animateur</th><th>Chantier</th><th>Thèmes</th><th>Statut</th><th>Actions</th></tr></thead>'+
+    '<tbody>';
+  
+  if(filtered.length===0){
+    html+='<tr><td colspan="6" style="text-align:center;padding:20px;color:#94a3b8">Aucune causerie trouvée</td></tr>';
+  } else {
+    filtered.slice(0,50).forEach(function(c){
+      var status=(c.status||'pending');
+      var badgeCls=status==='validated'?'green':(status==='rejected'?'red':'amber');
+      var badgeLabel=status==='validated'?'Validée':(status==='rejected'?'Rejetée':'En attente');
+      var themesHtml=c.themes.map(function(t){return '<span class="tag">'+esc(t)+'</span>'}).join(' ');
+      html+='<tr>'+
+        '<td>'+c.date_label.split('à')[0]+'</td>'+
+        '<td><strong>'+esc(c.animateur)+'</strong></td>'+
+        '<td>'+esc(c.chantier)+'</td>'+
+        '<td>'+themesHtml+'</td>'+
+        '<td><span class="prev-badge '+badgeCls+'">'+badgeLabel+'</span></td>'+
+        '<td>'+
+          '<div style="display:flex;gap:3px;flex-wrap:wrap">'+
+            '<button class="prev-action-btn view" onclick="viewCauserie(\''+c.id+'\')" title="Détails">👁️</button>';
+      
+      if(status==='pending'){
+        html+=  '<button class="prev-action-btn ok" onclick="validateCauserie(\''+c.id+'\',\'validate\')" title="Valider">✅</button>'+
+                '<button class="prev-action-btn no" onclick="validateCauserie(\''+c.id+'\',\'reject\')" title="Rejeter">❌</button>';
+      }
+      
+      html+=    '<button class="prev-action-btn plan" onclick="createPlanFor(\''+c.id+'\')" title="Plan d\'action">📋</button>'+
+          '</div>'+
+        '</td>'+
+      '</tr>';
+    });
+  }
+  
+  html+='</tbody></table></div>';
+  
+  el.innerHTML=html;
+}
+
+// Utils
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+window.loadPreventionDashboard=loadPreventionDashboard;
+
+// Validation
+async function validateCauserie(cid, action){
+  var notes=prompt(action==='validate'?'Notes de validation (optionnel):':'Motif du rejet (optionnel):');
+  if(notes===null)return;
+  var r=await api('/api/causeries/'+cid+'/validate',{method:'PUT',body:{email:user,action:action,notes:notes||''}});
+  if(r.ok){toast('Causerie '+(action==='validate'?'validée':'rejetée')+' ✅');loadPreventionDashboard()}
+  else toast('Erreur: '+r.error);
+}
+window.validateCauserie=validateCauserie;
+
+async function viewCauserie(cid){
+  // Réutiliser le modal existant
+  did=cid;
+  var data=await api('/api/causeries/'+encodeURIComponent(user));
+  if(data.ok){
+    var c=data.causeries.find(function(x){return x.id===cid})||{};
+    showDetail(c);
+  }
+}
+window.viewCauserie=viewCauserie;
+
+async function createPlanFor(cid){
+  var title=prompt('Titre du plan d\'action:');
+  if(!title)return;
+  var desc=prompt('Description (optionnel):');
+  var assigned=prompt('Assigné à (email) (optionnel):');
+  var due=prompt('Échéance (JJ/MM/AAAA) (optionnel):');
+  var priority=prompt('Priorité (normale/haute):')||'normale';
+  var r=await api('/api/action-plans',{method:'POST',body:{email:user,causerie_id:cid,title:title,description:desc||'',assigned_to:assigned||'',due_date:due||'',priority:priority}});
+  if(r.ok){toast('Plan créé ✅');loadPreventionDashboard()}
+  else toast('Erreur: '+r.error);
+}
+window.createPlanFor=createPlanFor;
+
+// Plans d'action modals
+async function showPlanDetail(planId){
+  // Récupérer les commentaires
+  var r=await api('/api/action-plans/'+planId+'/comments?email='+encodeURIComponent(user));
+  var plansR=await api('/api/action-plans?email='+encodeURIComponent(user));
+  var plan=plansR.plans?plansR.plans.find(function(p){return p.id===planId}):null;
+  if(!plan)return;
+  
+  var comments=r.comments||[];
+  var html='<div class="modal" style="position:relative;max-width:500px">'+
+    '<button onclick="closeModal()" class="modal-close">x</button>'+
+    '<h3>📋 Plan d\'action</h3>'+
+    '<div class="dl"><span class="dl-l">Titre</span><span class="dl-v">'+esc(plan.title)+'</span></div>'+
+    (plan.description?'<div class="dl"><span class="dl-l">Description</span><span class="dl-v">'+esc(plan.description)+'</span></div>':'')+
+    (plan.assigned_to?'<div class="dl"><span class="dl-l">Assigné</span><span class="dl-v">'+esc(plan.assigned_to)+'</span></div>':'')+
+    (plan.due_date?'<div class="dl"><span class="dl-l">Échéance</span><span class="dl-v">'+esc(plan.due_date)+'</span></div>':'')+
+    '<div class="dl"><span class="dl-l">Statut</span><span class="dl-v"><span class="prev-badge '+(plan.status==='open'?'amber':(plan.status==='done'?'green':'red'))+'">'+esc(plan.status)+'</span></span></div>'+
+    '<div style="margin-top:10px"><button class="btn btn-sm btn-secondary" onclick="updatePlanStatus(\''+plan.id+'\',\'done\')">✅ Marquer fait</button> '+
+    '<button class="btn btn-sm btn-secondary" onclick="updatePlanStatus(\''+plan.id+'\',\'cancelled\')">❌ Annuler</button></div>'+
+    '<div class="card-title" style="margin-top:12px">Commentaires</div>'+
+    '<div id="plan-comments-'+planId+'">';
+  
+  if(comments.length===0){
+    html+='<p style="color:#94a3b8;font-size:13px">Aucun commentaire</p>';
+  } else {
+    comments.forEach(function(cm){
+      html+='<div class="plan-comment"><strong>'+esc(cm.author_email.split('@')[0])+'</strong> <span class="date">'+cm.created_at.split('T')[0]+'</span><br>'+esc(cm.comment)+'</div>';
+    });
+  }
+  
+  html+='</div>'+
+    '<div style="display:flex;gap:6px;margin-top:8px">'+
+      '<input type="text" id="plan-comment-in-'+planId+'" class="in" placeholder="Ajouter un commentaire..." style="flex:1">'+
+      '<button class="btn btn-sm btn-primary" style="width:auto" onclick="addPlanComment(\''+planId+'\')">Envoyer</button>'+
+    '</div>'+
+  '</div>';
+  
+  showModal(html);
+}
+window.showPlanDetail=showPlanDetail;
+
+function showModal(html){
+  var overlay=document.getElementById('detail-modal');
+  overlay.innerHTML=html;
+  overlay.classList.add('show');
+}
+window.showModal=showModal;
+
+async function updatePlanStatus(planId, status){
+  var r=await api('/api/action-plans/'+planId,{method:'PUT',body:{email:user,status:status}});
+  if(r.ok){toast('Plan mis à jour ✅');closeModal();loadPreventionDashboard()}
+}
+window.updatePlanStatus=updatePlanStatus;
+
+async function addPlanComment(planId){
+  var inp=document.getElementById('plan-comment-in-'+planId);
+  if(!inp||!inp.value.trim())return;
+  var r=await api('/api/action-plans/'+planId+'/comments',{method:'POST',body:{email:user,comment:inp.value.trim()}});
+  if(r.ok){inp.value='';showPlanDetail(planId)}
+}
+window.addPlanComment=addPlanComment;
+
+// ===== AMELIORATIONS =====
+async function submitImprovement() {
+  var title=document.getElementById('imp-title');
+  var text=document.getElementById('imp-text');
+  if(!title.value.trim()){toast('Ajoutez un titre');title.focus();return}
+  if(!text.value.trim()){toast('Ajoutez une description');text.focus();return}
+  var r=await api('/api/improvements',{method:'POST',body:{email:user,title:title.value.trim(),text:text.value.trim()}});
+  if(r.ok){
+    toast('Demande envoyée ✅');
+    title.value='';text.value='';
+    loadImprovements();
+  } else toast('Erreur: '+r.error);
+}
+window.submitImprovement=submitImprovement;
+
+async function loadImprovements() {
+  var el=document.getElementById('imp-list');
+  if(!el)return;
+  try {
+    var r=await api('/api/improvements/'+encodeURIComponent(user));
+    if(!r.ok||!r.improvements||r.improvements.length===0){
+      el.innerHTML='<div class="empty"><div class="icon">💡</div><p>Aucune demande pour le moment</p></div>';
+      return;
+    }
+    el.innerHTML=r.improvements.map(function(imp){
+      var statusHtml='';
+      if(imp.status==='pending') statusHtml='<span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#fef3c7;color:#92400e">⏳ En attente</span>';
+      else if(imp.status==='approved') statusHtml='<span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#dbeafe;color:#1e40af">✅ Approuvée</span>';
+      else if(imp.status==='rejected') statusHtml='<span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#fef2f2;color:#991b1b">❌ Refusée</span>';
+      else if(imp.status==='done') statusHtml='<span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#f0fdf4;color:#166534">✅ Réalisée</span>';
+      
+      var commentHtml='';
+      if(imp.review_comment) commentHtml='<div style="margin-top:4px;padding:6px 8px;background:#f8fafc;border-radius:6px;font-size:12px;color:#475569;border:1px solid #e2e8f0"><strong>Réponse :</strong> '+esc(imp.review_comment)+'</div>';
+      
+      return '<div style="padding:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:8px">'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">'+
+          '<strong style="font-size:14px">'+esc(imp.title)+'</strong>'+statusHtml+
+        '</div>'+
+        '<p style="font-size:13px;color:#475569;margin-top:4px">'+esc(imp.text)+'</p>'+
+        '<div style="font-size:11px;color:#94a3b8;margin-top:4px">Envoyée le '+imp.created_at.split('T')[0]+'</div>'+
+        commentHtml+
+      '</div>';
+    }).join('');
+  } catch(e){el.innerHTML='<div class="empty"><p>Erreur de chargement</p></div>'}
+}
+window.loadImprovements=loadImprovements;
+
+async function loadImpBadge(){
+  if(!user)return;
+  try{
+    var r=await api('/api/improvements/count/'+encodeURIComponent(user));
+    if(r.ok&&r.count>0){
+      var btn=document.querySelector('.nav-btn[data-page="improvements"]');
+      if(btn){var b=btn.querySelector('.nav-badge')||document.createElement('span');b.className='nav-badge';b.textContent=r.count;if(!btn.querySelector('.nav-badge'))btn.appendChild(b)}
+    }
+  }catch(e){}
+}
+window.loadImpBadge=loadImpBadge;
+
+function showAllPlans(){
+  loadPreventionDashboard();
+  document.getElementById('prev-filter-status').value='all';
+  // Scroll to plans section
+}
+window.showAllPlans=showAllPlans;
+
+// NAVIGATION
+function showPage(n){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  var el=document.getElementById('p-'+n);if(el)el.classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>{if(b.dataset.page===n)b.classList.add('active')});
+  if(n==='history')renderHistory();
+  if(n==='stats')renderStats();
+  if(n==='certification')renderCertification();
+  if(n==='improvements')loadImprovements();
+  if(n==='prevention')loadPreventionDashboard();
+}
+window.showPage=showPage;
+function updateBadges(){var n=causeries.length;var b=document.getElementById('nav-badge');if(n>0){b.textContent=n;b.style.display='inline'}else b.style.display='none'}
+
+document.getElementById('detail-modal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+document.getElementById('profile-modal').addEventListener('click',function(e){if(e.target===this)closeProfile()});
+document.getElementById('login-email').addEventListener('keydown',function(e){if(e.key==='Enter')login()});
+document.getElementById('sig-overlay').addEventListener('click',function(e){if(e.target===this)sigClose()});
+
+(function init(){var s=localStorage.getItem('user');if(s){document.getElementById('login-email').value=s;login()}})();
+
+// Charger le rôle après connexion
+setTimeout(function(){if(user)loadProfile()}, 500);
+
+/* ======= PWA: IndexedDB + Offline Queue + Suggestions ======= */
+
+/* IndexedDB : file d'attente hors-ligne */
+var DB_NAME='offline-queue',DB_VER=1;
+var dbPromise=null;
+
+function openDB(){
+  if(dbPromise)return dbPromise;
+  return new Promise(function(resolve){
+    if(!window.indexedDB){resolve(null);return}
+    var req=indexedDB.open(DB_NAME,DB_VER);
+    req.onupgradeneeded=function(e){
+      var db=e.target.result;
+      if(!db.objectStoreNames.contains('pending'))
+        db.createObjectStore('pending',{keyPath:'id',autoIncrement:true});
+    };
+    req.onsuccess=function(e){dbPromise=e.target.result;resolve(dbPromise)};
+    req.onerror=function(){resolve(null)};
+  });
+}
+
+async function addToOfflineQueue(data){
+  var db=await openDB();
+  if(!db)return;
+  var tx=db.transaction('pending','readwrite');
+  tx.objectStore('pending').add({data:data,created:new Date().toISOString()});
+  tx.oncomplete=function(){updatePendingBadge()};
+}
+
+async function getOfflineQueue(){
+  var db=await openDB();
+  if(!db)return[];
+  return new Promise(function(resolve){
+    var tx=db.transaction('pending','readonly');
+    var req=tx.objectStore('pending').getAll();
+    req.onsuccess=function(){resolve(req.result||[])};
+    req.onerror=function(){resolve([])};
+  });
+}
+
+async function removeFromQueue(id){
+  var db=await openDB();
+  if(!db)return;
+  db.transaction('pending','readwrite').objectStore('pending').delete(id);
+}
+
+async function updatePendingBadge(){
+  var items=await getOfflineQueue();
+  var el=document.getElementById('pending-badge');
+  var cnt=document.getElementById('pending-count');
+  if(items.length>0){cnt.textContent=items.length;el.style.display='inline'}
+  else el.style.display='none';
+}
+
+async function syncOfflineQueue(){
+  var items=await getOfflineQueue();
+  if(!items.length)return;
+  for(var i=0;i<items.length;i++){
+    var item=items[i];
+    try{
+      var r=await fetch(API+'/api/causeries',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(item.data)});
+      var j=await r.json();
+      if(j.ok){await removeFromQueue(item.id);toast('Synchronisation reussie !')}
+    }catch(e){}
+  }
+  updatePendingBadge();
+  if(user)loadDataSilent();
+}
+
+/* Detection reseau */
+function updateOnlineStatus(){
+  var badge=document.getElementById('offline-badge');
+  if(navigator.onLine){badge.style.display='none';syncOfflineQueue()}
+  else badge.style.display='inline';
+}
+window.addEventListener('online',updateOnlineStatus);
+window.addEventListener('offline',updateOnlineStatus);
+
+/* Interval de verification reseau */
+setInterval(function(){
+  fetch(API+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})
+    .then(function(){if(!navigator.onLine)updateOnlineStatus()})
+    .catch(function(){if(navigator.onLine)document.getElementById('offline-badge').style.display='inline'})
+},30000);
+
+/* Api avec fallback offline */
+var _origApi=api;
+api=async function(url,o){
+  try{
+    var r=await fetch(API+url,{headers:{'Content-Type':'application/json'},...(o||{}),body:o&&o.body?JSON.stringify(o.body):undefined});
+    var j=await r.json();
+    if(j.offline)throw new Error('offline');
+    return j;
+  }catch(e){
+    if(url==='/api/causeries'&&o&&o.method==='POST'&&o.body){
+      await addToOfflineQueue(o.body);
+      toast('Sauvegarde localement &mdash; synchronisation...');
+      return {ok:true,id:'offline-'+Date.now(),offline:true};
+    }
+    return {ok:false,error:'Hors-ligne',offline:true};
+  }
+};
+
+/* Suggestions */
+var suggestionsCache={data:null,time:0};
+
+async function loadSuggestions(){
+  if(!user)return;
+  if(suggestionsCache.data&&(Date.now()-suggestionsCache.time)<30*60*1000)
+    {renderSuggestions(suggestionsCache.data);return}
+  try{
+    var r=await _origApi('/api/suggestions/'+encodeURIComponent(user));
+    if(r.ok){suggestionsCache={data:r,time:Date.now()};renderSuggestions(r)}
+  }catch(e){}
+}
+
+function renderSuggestions(data){
+  var card=document.getElementById('suggestions-card');
+  var sdj=document.getElementById('suggestion-du-jour');
+  var list=document.getElementById('suggestions-list');
+  if(!data||!data.suggestions||!data.suggestions.length){card.style.display='none';return}
+  card.style.display='block';
+  if(data.suggestion_du_jour){sdj.textContent=data.suggestion_du_jour.texte;sdj.style.display='block'}
+  else sdj.style.display='none';
+  var icons={theme:'&#127919;',chantier:'&#127959;&#65039;',participant:'&#128100;'};
+  list.innerHTML=data.suggestions.map(function(s,i){
+    var ico=icons[s.type]||'&#128161;';
+    return '<div class="suggestion-item" onclick="applySuggestion('+i+')" style="display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border:1px solid #e9edf2;border-radius:10px;margin-bottom:5px;cursor:pointer;background:#fafbff">'+
+      '<span style="font-size:16px;flex-shrink:0">'+ico+'</span><span style="font-size:13px;line-height:1.4">'+s.texte+'</span></div>';
+  }).join('');
+  suggestionsCache.data=data;
+  suggestionsCache.time=Date.now();
+}
+
+function applySuggestion(index){
+  if(!suggestionsCache.data||!suggestionsCache.data.suggestions[index])return;
+  var s=suggestionsCache.data.suggestions[index];
+  switch(s.action){
+    case 'fill_theme':
+      document.querySelectorAll('.theme-btn').forEach(function(b){b.classList.toggle('active',b.dataset.t===s.valeur)});
+      toast('Theme "'+s.valeur+'" selectionne');
+      renderGuides();
+      break;
+    case 'fill_chantier':
+      document.getElementById('ch-inp').value=s.valeur;toast('Chantier "'+s.valeur+'" insere');break;
+    case 'add_participant':
+      var exists=false;
+      document.querySelectorAll('.part-in').forEach(function(inp){if(inp.value.trim()===s.valeur)exists=true});
+      if(!exists)addPart(s.valeur);
+      toast('Participant "'+s.valeur+'" ajoute');break;
+  }
+}
+window.applySuggestion=applySuggestion;
+
+function applySuggestionDuJour(){
+  if(!suggestionsCache.data||!suggestionsCache.data.suggestion_du_jour)return;
+  var t=suggestionsCache.data.suggestion_du_jour.theme;
+  if(t){document.querySelectorAll('.theme-btn').forEach(function(b){b.classList.toggle('active',b.dataset.t===t)});renderGuides();toast('Theme "'+t+'" selectionne !')}
+}
+window.applySuggestionDuJour=applySuggestionDuJour;
+
+/* Patch showPage pour charger les suggestions */
+var _origSP=showPage;
+showPage=function(n){_origSP(n);if(n==='new')loadSuggestions()};
+window.showPage=showPage;
+
+/* Initialisation */
+updateOnlineStatus();
+updatePendingBadge();
+renderGuides();
+
+})();
+
+/* ======= PWA: Enregistrement du Service Worker ======= */
+if('serviceWorker'in navigator)navigator.serviceWorker.register('/static/sw.js').catch(function(){});
+</script>
+</body>
+</html>

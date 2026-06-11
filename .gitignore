@@ -1,0 +1,35 @@
+# Dependencies
+vendor/
+
+# Base de données SQLite
+*.db
+
+# Environnement
+.env
+.env.*
+
+# Cache Python (legacy)
+__pycache__/
+*.py[cod]
+.Python
+
+# Uploads
+uploads/photos/*
+
+# Cache Hermes / scripts
+.hermes/
+.last_improvement_check
+scripts/*
+
+# Fichiers de log générés automatiquement
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

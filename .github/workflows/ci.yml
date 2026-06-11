@@ -1,0 +1,39 @@
+name: CI - Validation automatique
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  php-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: sqlite3, gd, mbstring, dom, json
+
+      - name: Validate composer
+        run: composer validate --strict
+
+      - name: PHP Syntax Check
+        run: find . -name '*.php' ! -path './vendor/*' -exec php -l {} \;
+
+      - name: Install dependencies
+        run: composer install --no-dev --prefer-dist
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for sensitive files
+        run: |
+          if [ -f data.db ]; then echo "⚠️ data.db should not be committed"; fi
+          if ls *.sqlite* 2>/dev/null; then echo "⚠️ SQLite files should not be committed"; fi
+          echo "✅ Security check passed"
