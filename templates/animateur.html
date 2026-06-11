@@ -224,6 +224,9 @@ textarea.in{resize:vertical;min-height:70px}
     </div>
     <button class="btn btn-primary" onclick="register()">Créer mon compte</button>
     <p id="register-error" style="font-size:13px;color:#ef4444;margin-top:8px;text-align:center;display:none"></p>
+    <p style="text-align:center;margin-top:10px;font-size:13px">
+      Déjà un compte ? <a href="#" onclick="showLoginForm();return false" style="color:#2d5a87;font-weight:600">Se connecter</a>
+    </p>
   </div>
 
   <!-- Formulaire de connexion (caché par défaut) -->
@@ -967,6 +970,14 @@ var isAdmin = false;
       await loadUsers();
     }
     window.showAdminPanel = showAdminPanel;
+
+    function showLoginForm() {
+      document.getElementById('register-form').style.display = 'none';
+      document.getElementById('login-form').style.display = 'block';
+      document.getElementById('register-error').style.display = 'none';
+      document.getElementById('login-error').style.display = 'none';
+    }
+    window.showLoginForm = showLoginForm;
 
     async function loadUsers() {
       var r = await api('/api/users');
