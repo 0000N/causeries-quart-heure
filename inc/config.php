@@ -5,7 +5,7 @@ define('DB_PATH', ROOT_DIR . '/data.db');
 define('UPLOAD_DIR', ROOT_DIR . '/uploads/photos/');
 define('TEMPLATE_DIR', ROOT_DIR . '/templates/');
 define('STATIC_DIR', ROOT_DIR . '/static/');
-define('APP_URL', 'http://localhost:8080'); // Modifier selon déploiement
+define('APP_URL', 'https://hls-apps.fr/causeries');
 define('DEBUG', false);
 
 // Créer le dossier uploads s'il n'existe pas

@@ -62,6 +62,7 @@ if (strpos($uri, '/api/') === 0) {
 // === ROUTES FRONTEND ===
 switch ($uri) {
     case '/':
+    case '/index.php':
         serveTemplate('animateur.html');
         break;
     case '/prevention':
