@@ -205,6 +205,10 @@ tbody tr:last-child td{border-bottom:none}
       <label class="form-label">Email professionnel</label>
       <input class="form-input" id="loginEmail" type="email" placeholder="prenom.nom@entreprise.com" autocomplete="email" autofocus>
     </div>
+    <div class="form-group">
+      <label class="form-label">Mot de passe</label>
+      <input class="form-input" id="loginPassword" type="password" placeholder="Votre mot de passe" autocomplete="current-password">
+    </div>
     <button class="btn btn-primary" id="loginBtn" style="width:100%;margin-top:4px">
       Accéder au Dashboard
     </button>
@@ -540,13 +544,22 @@ document.getElementById('loginBtn').addEventListener('click', doLogin);
 document.getElementById('loginEmail').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') doLogin();
 });
+document.getElementById('loginPassword').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') doLogin();
+});
 
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const password = document.getElementById('loginPassword').value;
   const errEl = document.getElementById('loginError');
   errEl.style.display = 'none';
   if (!email || !email.includes('@')) {
     errEl.textContent = 'Veuillez entrer un email valide';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (!password) {
+    errEl.textContent = 'Mot de passe requis';
     errEl.style.display = 'block';
     return;
   }
@@ -556,7 +569,8 @@ async function doLogin() {
     const resp = await fetch('/api/login', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({email})
+      credentials: 'same-origin',
+      body: JSON.stringify({email, password})
     });
     const data = await resp.json();
     if (!data.ok) {
@@ -579,11 +593,13 @@ async function doLogin() {
   }
 }
 
-function logout() {
+async function logout() {
+  await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
   userEmail = '';
   document.getElementById('app').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
   document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPassword').value = '';
   document.getElementById('loginBtn').textContent = 'Accéder au Dashboard';
   document.getElementById('loginBtn').disabled = false;
 }
@@ -1195,6 +1211,19 @@ async function rejectImprovement(id) {
   } catch(e) { toast('Erreur réseau', 'error'); }
 }
 window.rejectImprovement = rejectImprovement;
+// ===== SESSION CHECK ON LOAD =====
+(async function() {
+  const resp = await fetch('/api/session', { credentials: 'same-origin' });
+  const data = await resp.json();
+  if (data.authenticated && data.role === 'prevention') {
+    userEmail = data.email;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    document.getElementById('userBadge').textContent = '👤 ' + data.email.split('@')[0];
+    initDashboard();
+  }
+})();
+
 </script>
 </body>
 </html>
