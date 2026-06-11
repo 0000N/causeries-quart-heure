@@ -16,9 +16,18 @@ require_once __DIR__ . '/inc/database.php';
 // Initialiser la DB au premier lancement
 initDB();
 
+// Détection du sous-dossier (ex: /causeries pour hébergement en sous-répertoire)
+$scriptName = $_SERVER['SCRIPT_NAME'];
+$basePath = rtrim(dirname($scriptName), '/');
+define('BASE_PATH', $basePath);
+
 // Router
 $method = $_SERVER['REQUEST_METHOD'];
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+// Supprimer le préfixe du sous-dossier si présent
+if (BASE_PATH && strpos($uri, BASE_PATH) === 0) {
+    $uri = substr($uri, strlen(BASE_PATH));
+}
 $uri = rtrim($uri, '/') ?: '/';
 
 // CORS
@@ -108,5 +117,15 @@ function serveTemplate($name) {
         error_log('Serving template: ' . $name);
     }
     $html = file_get_contents($path);
+    // Injecter BASE_PATH pour les appels JS en sous-dossier
+    $basePathJs = json_encode(BASE_PATH);
+    $inject = "<script>window.BASE_PATH=$basePathJs;</script>\n";
+    $html = str_replace('<head>', "<head>\n$inject", $html);
+    // Remplacer les chemins absolus /api/ et /static/ par des chemins relatifs au sous-dossier
+    if (BASE_PATH) {
+        $html = str_replace("'/api/", "window.BASE_PATH+'/api/", $html);
+        $html = str_replace('href="/static/', 'href="' . BASE_PATH . '/static/', $html);
+        $html = str_replace("'/static/", "window.BASE_PATH+'/static/", $html);
+    }
     echo $html;
 }

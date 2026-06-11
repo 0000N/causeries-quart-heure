@@ -4,10 +4,10 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # Redirect trailing slashes (except root)
+    # Redirect trailing slashes (subdirectory-safe)
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.+)/$ /$1 [L,R=301]
+    RewriteRule ^(.+)/$ $1 [L,R=301]
 
     # Route all non-file, non-directory requests to index.php
     RewriteCond %{REQUEST_FILENAME} !-f

@@ -889,7 +889,7 @@ async function showDetail(id) {
         ${plans}
       </div>
       <div style="margin-top:16px;display:flex;gap:8px">
-        <a class="btn btn-primary btn-sm" href="/api/export/${c.id}?email=${encodeURIComponent(userEmail)}" target="_blank">📄 Exporter PDF</a>
+        <a class="btn btn-primary btn-sm" href="${window.BASE_PATH||''}/api/export/${c.id}?email=${encodeURIComponent(userEmail)}" target="_blank">📄 Exporter PDF</a>
       </div>
     `;
   } catch(e) { document.getElementById('detailBody').innerHTML = '<div class="empty-state">Erreur de chargement</div>'; }
