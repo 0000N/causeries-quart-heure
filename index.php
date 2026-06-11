@@ -2,11 +2,12 @@
 // ========================================
 // CAUSERIES 1/4h SÉCURITÉ - Point d'entrée unique
 // ========================================
+session_name('CAUSERIES_SESS');
 session_set_cookie_params([
     'lifetime' => 86400 * 7, // 7 jours
-    'path' => '/',
+    'path' => '/causeries',
     'httponly' => true,
-    'samesite' => 'Lax',
+    'samesite' => 'Strict',
 ]);
 session_start();
 
