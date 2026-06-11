@@ -872,23 +872,12 @@ const GUIDES={
       } else {
         // Vérifier si un admin existe (première visite)
         var r = await api('/api/session');
-        // Tenter un register rapide pour voir si admin existe
-        // Si register renvoie 403, c'est qu'un admin existe => login
-        // Si register renvoie 200 (jamais), c'est qu'on doit créer l'admin
-        // On utilise l'absence d'admin comme indicateur
-        var testReg = await fetch(API + '/api/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: 'test', password: 'test' })
-        });
-        var testData = await testReg.json();
-        if (testData.error && testData.error.includes('administrateur existe déjà')) {
-          document.getElementById('register-form').style.display = 'none';
-          document.getElementById('login-form').style.display = 'block';
-        } else if (testData.error && testData.error.includes('Email invalide')) {
+        if (r.hasAdmin) {
+          // Admin existe → afficher le login
           document.getElementById('register-form').style.display = 'none';
           document.getElementById('login-form').style.display = 'block';
         } else {
+          // Pas d'admin → afficher l'inscription
           document.getElementById('login-form').style.display = 'none';
           document.getElementById('register-form').style.display = 'block';
         }

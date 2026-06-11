@@ -180,8 +180,9 @@ if ($uri === '/api/logout' && $method === 'POST') {
 
 // GET /api/session — Vérifier la session en cours
 if ($uri === '/api/session' && $method === 'GET') {
+    $hasAdmin = hasAdmin();
     if (!isset($_SESSION['email'])) {
-        jsonResponse(['ok' => false, 'authenticated' => false], 200);
+        jsonResponse(['ok' => false, 'authenticated' => false, 'hasAdmin' => $hasAdmin], 200);
     }
 
     $db = getDB();
