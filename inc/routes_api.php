@@ -78,6 +78,11 @@ function parseDateLabel(string $dateIso): string {
 $method = $_SERVER['REQUEST_METHOD'];
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = rtrim($uri, '/') ?: '/';
+// Supprimer BASE_PATH si présent (sous-dossier)
+if (defined('BASE_PATH') && BASE_PATH && strpos($uri, BASE_PATH) === 0) {
+    $uri = substr($uri, strlen(BASE_PATH));
+    $uri = rtrim($uri, '/') ?: '/';
+}
 $query = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY) ?? '';
 parse_str($query, $params);
 
