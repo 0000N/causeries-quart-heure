@@ -209,15 +209,68 @@ textarea.in{resize:vertical;min-height:70px}
 
 <div id="login-screen" class="login-page">
   <div class="logo">🛡️</div>
-  <h2>1/4h Securite</h2>
-  <p>Application de causeries 1/4h sécurité</p>
-  <div class="login-card">
+  <h2 id="login-title">Causeries 1/4h Sécurité</h2>
+  <p id="login-subtitle">Application de gestion des causeries sécurité</p>
+
+  <!-- Formulaire de connexion -->
+  <div id="login-form" class="login-card">
     <div class="fg">
-      <label class="fl">Identifiant (email)</label>
+      <label class="fl">Email</label>
       <input type="email" class="in" id="login-email" placeholder="prenom@exemple.fr" inputmode="email" autocomplete="email">
     </div>
+    <div class="fg">
+      <label class="fl">Mot de passe</label>
+      <input type="password" class="in" id="login-password" placeholder="Votre mot de passe" autocomplete="current-password">
+    </div>
     <button class="btn btn-primary" onclick="login()">Se connecter</button>
-    <p style="font-size:12px;color:#94a3b8;margin-top:8px;text-align:center">Aucun mot de passe</p>
+    <p id="login-error" style="font-size:13px;color:#ef4444;margin-top:8px;text-align:center;display:none"></p>
+  </div>
+
+  <!-- Inscription premier admin -->
+  <div id="register-form" class="login-card" style="display:none">
+    <div class="fg">
+      <label class="fl">Créer un compte administrateur</label>
+      <input type="email" class="in" id="reg-email" placeholder="admin@exemple.fr" inputmode="email" autocomplete="email">
+    </div>
+    <div class="fg">
+      <label class="fl">Mot de passe</label>
+      <input type="password" class="in" id="reg-password" placeholder="Minimum 6 caractères" autocomplete="new-password">
+    </div>
+    <button class="btn btn-primary" onclick="register()">Créer mon compte</button>
+    <p id="register-error" style="font-size:13px;color:#ef4444;margin-top:8px;text-align:center;display:none"></p>
+  </div>
+
+  <!-- Admin panel : gestion des utilisateurs -->
+  <div id="admin-panel" style="display:none;margin-top:12px">
+    <div class="card">
+      <div class="card-title">👥 Gestion des utilisateurs</div>
+      <div id="users-list" style="margin-bottom:10px"></div>
+      <div style="border-top:1px solid #e2e8f0;padding-top:10px">
+        <div class="fg">
+          <label class="fl">Inviter un utilisateur</label>
+          <input type="email" class="in" id="invite-email" placeholder="email@exemple.fr" style="margin-bottom:6px">
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:6px">
+          <select id="invite-role" class="in" style="flex:1">
+            <option value="user">Animateur</option>
+            <option value="prevention">Prévention</option>
+          </select>
+          <button class="btn btn-primary btn-sm" onclick="inviteUser()" style="width:auto;padding:11px 14px">Inviter</button>
+        </div>
+        <div id="invite-result" style="font-size:13px;margin-top:4px;display:none"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔑 Changer mon mot de passe</div>
+      <div class="fg">
+        <input type="password" class="in" id="cp-current" placeholder="Mot de passe actuel" style="margin-bottom:6px">
+        <input type="password" class="in" id="cp-new" placeholder="Nouveau mot de passe (6+ caractères)" style="margin-bottom:6px">
+        <button class="btn btn-primary" onclick="changePassword()">Mettre à jour</button>
+        <p id="cp-error" style="font-size:13px;color:#ef4444;margin-top:4px;display:none"></p>
+        <p id="cp-success" style="font-size:13px;color:#16a34a;margin-top:4px;display:none"></p>
+      </div>
+    </div>
+    <button class="btn btn-secondary" onclick="logout()" style="margin-top:6px">Se déconnecter</button>
   </div>
 </div>
 
@@ -378,7 +431,10 @@ textarea.in{resize:vertical;min-height:70px}
       <button class="btn btn-primary btn-sm" onclick="addShare()" style="width:auto;padding:11px 14px">Partager</button>
     </div>
   </div>
-  <button class="btn btn-secondary" onclick="logout()" style="margin-top:8px">Deconnexion</button>
+  <button class="btn btn-secondary" onclick="logout()" style="margin-top:8px">Déconnexion</button>
+  <div id="admin-profile-btn" style="display:none;margin-top:8px">
+    <button class="btn btn-primary" onclick="closeProfile();showAdminPanel()">⚙️ Administration</button>
+  </div>
 </div></div>
 
 <!-- WIZARD -->
@@ -773,33 +829,226 @@ const GUIDES={
     ]
   },
   'Autre':{
-    label:'Autre',
-    icon:'📋',
-    topics:[]
-  }
-};
+    var API = ''; // Same origin
+    var user = null;
+    var userRole = null;
+    var isAdmin = false;
+    var causeries = [];
+    var pCh = [];
+    var pP = [];
 
-async function api(url,o){return fetch(API+url,{headers:{'Content-Type':'application/json'},...(o||{}),body:o&&o.body?JSON.stringify(o.body):undefined}).then(r=>r.json())}
-function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2000)}
+    async function api(url, o) {
+      return fetch(API + url, {
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        ...(o || {}),
+        body: o && o.body ? JSON.stringify(o.body) : undefined
+      }).then(r => r.json());
+    }
 
-async function login(){
-  var e=document.getElementById('login-email').value.trim().toLowerCase();
-  if(!e||!e.includes('@')){toast('Email invalide');return}
-  var b=document.querySelector('.login-card .btn');b.textContent='Connexion...';b.disabled=true;
-  await api('/api/login',{method:'POST',body:{email:e}});
-  user=e;localStorage.setItem('user',e);
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('app-main').style.display='block';
-  document.getElementById('hdr-email').textContent=e.split('@')[0];
-  document.getElementById('prof-email').textContent=e;
-  await loadData();
-  document.getElementById('hdr-badge')&&(document.getElementById('hdr-badge').textContent='('+causeries.length+')');
-  toast('Connecte — '+causeries.length+' causeries');
-  b.textContent='Se connecter';b.disabled=false;
-  loadProfile();
-  loadImpBadge();
-}
-window.login=login;
+    function toast(m) {
+      var t = document.getElementById('toast');
+      t.textContent = m;
+      t.classList.add('show');
+      clearTimeout(t._h);
+      t._h = setTimeout(() => t.classList.remove('show'), 2000);
+    }
+
+    // Vérifier la session au chargement
+    async function checkSession() {
+      var s = await api('/api/session');
+      if (s.authenticated) {
+        user = s.email;
+        userRole = s.role;
+        isAdmin = s.isAdmin;
+        localStorage.setItem('user', s.email);
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app-main').style.display = 'block';
+        document.getElementById('hdr-email').textContent = s.email.split('@')[0];
+        document.getElementById('prof-email').textContent = s.email;
+        document.getElementById('hdr-badge') && (document.getElementById('hdr-badge').textContent = '(' + s.role + ')');
+        await loadData();
+        toast('Connecté');
+      } else {
+        // Vérifier si un admin existe (première visite)
+        var r = await api('/api/session');
+        // Tenter un register rapide pour voir si admin existe
+        // Si register renvoie 403, c'est qu'un admin existe => login
+        // Si register renvoie 200 (jamais), c'est qu'on doit créer l'admin
+        // On utilise l'absence d'admin comme indicateur
+        var testReg = await fetch(API + '/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: 'test', password: 'test' })
+        });
+        var testData = await testReg.json();
+        if (testData.error && testData.error.includes('administrateur existe déjà')) {
+          document.getElementById('register-form').style.display = 'none';
+          document.getElementById('login-form').style.display = 'block';
+        } else if (testData.error && testData.error.includes('Email invalide')) {
+          document.getElementById('register-form').style.display = 'none';
+          document.getElementById('login-form').style.display = 'block';
+        } else {
+          document.getElementById('login-form').style.display = 'none';
+          document.getElementById('register-form').style.display = 'block';
+        }
+      }
+    }
+
+    async function login() {
+      var email = document.getElementById('login-email').value.trim().toLowerCase();
+      var password = document.getElementById('login-password').value;
+      var errEl = document.getElementById('login-error');
+
+      if (!email || !email.includes('@')) { toast('Email invalide'); return; }
+      if (!password) { toast('Mot de passe requis'); return; }
+
+      var r = await api('/api/login', { method: 'POST', body: { email, password } });
+      if (r.ok) {
+        user = email;
+        userRole = r.role;
+        isAdmin = r.role === 'admin';
+        localStorage.setItem('user', email);
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app-main').style.display = 'block';
+        document.getElementById('hdr-email').textContent = email.split('@')[0];
+        document.getElementById('prof-email').textContent = email;
+        await loadData();
+        document.getElementById('hdr-badge') && (document.getElementById('hdr-badge').textContent = '(' + causeries.length + ')');
+        toast('Connecté — ' + causeries.length + ' causeries');
+        loadProfile();
+        loadImpBadge();
+      } else {
+        errEl.textContent = r.error || 'Erreur de connexion';
+        errEl.style.display = 'block';
+      }
+    }
+    window.login = login;
+
+    async function register() {
+      var email = document.getElementById('reg-email').value.trim().toLowerCase();
+      var password = document.getElementById('reg-password').value;
+      var errEl = document.getElementById('register-error');
+
+      if (!email || !email.includes('@')) { toast('Email invalide'); return; }
+      if (password.length < 6) { toast('Mot de passe : minimum 6 caractères'); return; }
+
+      var r = await api('/api/register', { method: 'POST', body: { email, password } });
+      if (r.ok) {
+        user = email;
+        userRole = 'admin';
+        isAdmin = true;
+        localStorage.setItem('user', email);
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app-main').style.display = 'block';
+        document.getElementById('hdr-email').textContent = email.split('@')[0];
+        document.getElementById('prof-email').textContent = email;
+        await loadData();
+        toast('✅ Compte administrateur créé !');
+        loadProfile();
+        loadImpBadge();
+      } else {
+        errEl.textContent = r.error || 'Erreur';
+        errEl.style.display = 'block';
+      }
+    }
+    window.register = register;
+
+    async function logout() {
+      await api('/api/logout', { method: 'POST' });
+      user = null;
+      userRole = null;
+      isAdmin = false;
+      localStorage.removeItem('user');
+      document.getElementById('app-main').style.display = 'none';
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('admin-panel').style.display = 'none';
+      document.getElementById('login-form').style.display = 'block';
+      document.getElementById('login-error').style.display = 'none';
+      document.getElementById('login-email').value = '';
+      document.getElementById('login-password').value = '';
+      closeProfile();
+    }
+    window.logout = logout;
+
+    async function showAdminPanel() {
+      document.getElementById('admin-panel').style.display = 'block';
+      document.getElementById('login-form').style.display = 'none';
+      document.getElementById('register-form').style.display = 'none';
+      document.getElementById('login-title').textContent = 'Administration';
+      document.getElementById('login-subtitle').textContent = 'Gestion des utilisateurs';
+      await loadUsers();
+    }
+    window.showAdminPanel = showAdminPanel;
+
+    async function loadUsers() {
+      var r = await api('/api/users');
+      if (!r.ok) return;
+      var html = '';
+      for (var u of r.users) {
+        var statusBadge = u.account_status === 'active'
+          ? '<span style="color:#16a34a">● Actif</span>'
+          : '<span style="color:#ef4444">● Désactivé</span>';
+        var toggleBtn = u.account_status === 'active'
+          ? `<button class="btn btn-sm" style="width:auto;padding:4px 8px;font-size:11px" onclick="toggleUser('${u.email}','disabled')">Désactiver</button>`
+          : `<button class="btn btn-sm" style="width:auto;padding:4px 8px;font-size:11px" onclick="toggleUser('${u.email}','active')">Activer</button>`;
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f1f5f9">' +
+          '<div><strong>' + u.email.split('@')[0] + '</strong> <span style="font-size:11px;color:#64748b">(' + u.role + ')</span><br>' +
+          '<span style="font-size:11px;color:#94a3b8">' + u.email + '</span></div>' +
+          '<div style="display:flex;align-items:center;gap:6px">' + statusBadge + toggleBtn + '</div></div>';
+      }
+      if (!html) html = '<p style="color:#94a3b8">Aucun utilisateur</p>';
+      document.getElementById('users-list').innerHTML = html;
+    }
+
+    async function toggleUser(email, status) {
+      await api('/api/users/' + encodeURIComponent(email) + '/status', { method: 'PUT', body: { status } });
+      await loadUsers();
+    }
+    window.toggleUser = toggleUser;
+
+    async function inviteUser() {
+      var email = document.getElementById('invite-email').value.trim().toLowerCase();
+      var role = document.getElementById('invite-role').value;
+      var resultEl = document.getElementById('invite-result');
+
+      if (!email || !email.includes('@')) { toast('Email invalide'); return; }
+
+      var r = await api('/api/invite', { method: 'POST', body: { email, role } });
+      if (r.ok) {
+        resultEl.innerHTML = '✅ Compte créé — <strong>Mot de passe temporaire :</strong> <code>' + r.temporaryPassword + '</code><br><span style="font-size:12px;color:#64748b">Transmettez ce mot de passe à l\'utilisateur. Il pourra le changer après connexion.</span>';
+        resultEl.style.display = 'block';
+        document.getElementById('invite-email').value = '';
+        await loadUsers();
+      } else {
+        resultEl.innerHTML = '❌ ' + (r.error || 'Erreur');
+        resultEl.style.display = 'block';
+      }
+    }
+    window.inviteUser = inviteUser;
+
+    async function changePassword() {
+      var current = document.getElementById('cp-current').value;
+      var newPwd = document.getElementById('cp-new').value;
+      var errEl = document.getElementById('cp-error');
+      var okEl = document.getElementById('cp-success');
+      errEl.style.display = 'none';
+      okEl.style.display = 'none';
+
+      if (newPwd.length < 6) { toast('Minimum 6 caractères'); return; }
+
+      var r = await api('/api/change-password', { method: 'POST', body: { currentPassword: current, newPassword: newPwd } });
+      if (r.ok) {
+        okEl.textContent = '✅ Mot de passe mis à jour';
+        okEl.style.display = 'block';
+        document.getElementById('cp-current').value = '';
+        document.getElementById('cp-new').value = '';
+      } else {
+        errEl.textContent = r.error || 'Erreur';
+        errEl.style.display = 'block';
+      }
+    }
+    window.changePassword = changePassword;
 
 async function loadData(){
   if(!user)return;
@@ -821,10 +1070,7 @@ async function loadDataSilent(){
   if(p.ok){pCh=p.chantiers;pP=p.participants;document.getElementById('ch-list').innerHTML=pCh.map(c=>'<option value="'+c.replace(/"/g,'&quot;')+'">').join('');}
   if(d.ok)causeries=d.causeries;renderHistory();renderStats();updateBadges();
   }catch(e){}
-}
 
-function logout(){if(!confirm('Se déconnecter ?'))return;user=null;localStorage.removeItem('user');document.getElementById('app-main').style.display='none';document.getElementById('login-screen').style.display='flex';closeProfile()}
-window.logout=logout;
 
 function showProfile(){
   document.getElementById('prof-email').textContent=user;
@@ -832,6 +1078,7 @@ function showProfile(){
   chE.innerHTML=pCh.length?pCh.map(c=>'<div class="profile-item"><span class="name">'+c+'</span><button class="del" onclick="delCh(\''+c.replace(/'/g,"\\'")+'\')">Suppr</button></div>').join(''):'<p style="color:#94a3b8;font-size:13px">Aucun chantier</p>';
   var pE=document.getElementById('prof-p');document.getElementById('prof-p-nb').textContent=pP.length;
   pE.innerHTML=pP.length?pP.map(n=>'<div class="profile-item"><span class="name">'+n+'</span><button class="del" onclick="delP(\''+n.replace(/'/g,"\\'")+'\')">Suppr</button></div>').join(''):'<p style="color:#94a3b8;font-size:13px">Aucun participant</p>';
+  document.getElementById('admin-profile-btn').style.display=isAdmin?'block':'none';
   document.getElementById('profile-modal').classList.add('show');
   loadShares()
 }
@@ -1792,11 +2039,15 @@ function updateBadges(){var n=causeries.length;var b=document.getElementById('na
 document.getElementById('detail-modal').addEventListener('click',function(e){if(e.target===this)closeModal()});
 document.getElementById('profile-modal').addEventListener('click',function(e){if(e.target===this)closeProfile()});
 document.getElementById('login-email').addEventListener('keydown',function(e){if(e.key==='Enter')login()});
+document.getElementById('login-password').addEventListener('keydown',function(e){if(e.key==='Enter')login()});
+document.getElementById('reg-password').addEventListener('keydown',function(e){if(e.key==='Enter')register()});
 document.getElementById('sig-overlay').addEventListener('click',function(e){if(e.target===this)sigClose()});
 
-(function init(){var s=localStorage.getItem('user');if(s){document.getElementById('login-email').value=s;login()}})();
+// Vérifier la session au chargement
+checkSession();
 
-// Charger le rôle après connexion
+// Si admin, ajouter un bouton admin dans le profil
+
 setTimeout(function(){if(user)loadProfile()}, 500);
 
 /* ======= PWA: IndexedDB + Offline Queue + Suggestions ======= */

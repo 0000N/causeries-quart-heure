@@ -2,6 +2,14 @@
 // ========================================
 // CAUSERIES 1/4h SÉCURITÉ - Point d'entrée unique
 // ========================================
+session_set_cookie_params([
+    'lifetime' => 86400 * 7, // 7 jours
+    'path' => '/',
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
+session_start();
+
 require_once __DIR__ . '/inc/config.php';
 require_once __DIR__ . '/inc/database.php';
 
@@ -17,9 +25,10 @@ $uri = rtrim($uri, '/') ?: '/';
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Credentials: true');
 if ($method === 'OPTIONS') { http_response_code(204); exit; }
 
-// === HEALTH CHECK (before generic API routes) ===
+// === HEALTH CHECK ===
 if ($uri === '/api/health' && $method === 'GET') {
     try {
         $db = getDB();
@@ -52,7 +61,7 @@ switch ($uri) {
     default:
         // Servir les fichiers statiques (sous /static/)
         if (strpos($uri, '/static/') === 0) {
-            $relativePath = substr($uri, 8); // 8 = strlen('/static/')
+            $relativePath = substr($uri, 8);
             $staticPath = STATIC_DIR . $relativePath;
             if (file_exists($staticPath) && !is_dir($staticPath)) {
                 $ext = pathinfo($staticPath, PATHINFO_EXTENSION);
@@ -76,7 +85,7 @@ switch ($uri) {
         }
         // Photo uploads (sous /uploads/photos/)
         if (strpos($uri, '/uploads/photos/') === 0) {
-            $photoPath = substr($uri, 16); // 16 = strlen('/uploads/photos/')
+            $photoPath = substr($uri, 16);
             $photoFull = UPLOAD_DIR . $photoPath;
             if (file_exists($photoFull) && !is_dir($photoFull)) {
                 header('Content-Type: image/jpeg');

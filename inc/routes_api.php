@@ -2,9 +2,6 @@
 // ========================================
 // CAUSERIES 1/4h SÉCURITÉ - Routes API
 // ========================================
-// Ce fichier est inclus par index.php quand l'URI commence par /api/
-// Les helpers getDB(), jsonResponse(), jsonInput() sont déjà dans database.php
-// Config disponible via config.php avec $PREVENTION_EMAILS
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/database.php';
@@ -20,7 +17,7 @@ use chillerlan\QRCode\QROptions;
 use Dompdf\Dompdf;
 
 // ========================================
-// HELPER FUNCTIONS
+// HELPERS
 // ========================================
 
 function generateUUID(): string {
@@ -87,12 +84,56 @@ parse_str($query, $params);
 try {
 
 // ========================================
-// AUTH / PROFIL
+// AUTHENTIFICATION
 // ========================================
 
+// Vérifier si un administrateur existe
+function hasAdmin(): bool {
+    $db = getDB();
+    $stmt = $db->query("SELECT COUNT(*) FROM profiles WHERE role = 'admin'");
+    return (int)$stmt->fetchColumn() > 0;
+}
+
+// POST /api/register — Création du premier compte (admin)
+if ($uri === '/api/register' && $method === 'POST') {
+    $data = jsonInput();
+    $email = trim(strtolower($data['email'] ?? ''));
+    $password = $data['password'] ?? '';
+
+    if (!$email || !str_contains($email, '@')) {
+        jsonResponse(['ok' => false, 'error' => 'Email invalide'], 400);
+    }
+    if (strlen($password) < 6) {
+        jsonResponse(['ok' => false, 'error' => 'Mot de passe : minimum 6 caractères'], 400);
+    }
+    if (hasAdmin()) {
+        jsonResponse(['ok' => false, 'error' => 'Un administrateur existe déjà. Connectez-vous.'], 403);
+    }
+
+    $db = getDB();
+    $stmt = $db->prepare("SELECT * FROM profiles WHERE email = ?");
+    $stmt->execute([$email]);
+    if ($stmt->fetch()) {
+        jsonResponse(['ok' => false, 'error' => 'Cet email est déjà utilisé'], 409);
+    }
+
+    $hash = password_hash($password, PASSWORD_DEFAULT);
+    $db->prepare("INSERT INTO profiles (email, password_hash, created_at, role, account_status) VALUES (?, ?, ?, 'admin', 'active')")
+       ->execute([$email, $hash, date('c')]);
+
+    $_SESSION['email'] = $email;
+    $_SESSION['role'] = 'admin';
+    $_SESSION['name'] = explode('@', $email)[0];
+
+    jsonResponse(['ok' => true, 'email' => $email, 'role' => 'admin', 'isNew' => true]);
+}
+
+// POST /api/login — Connexion avec mot de passe
 if ($uri === '/api/login' && $method === 'POST') {
     $data = jsonInput();
     $email = trim(strtolower($data['email'] ?? ''));
+    $password = $data['password'] ?? '';
+
     if (!$email || !str_contains($email, '@')) {
         jsonResponse(['ok' => false, 'error' => 'Email invalide'], 400);
     }
@@ -100,31 +141,178 @@ if ($uri === '/api/login' && $method === 'POST') {
     $db = getDB();
     $stmt = $db->prepare("SELECT * FROM profiles WHERE email = ?");
     $stmt->execute([$email]);
-    $existing = $stmt->fetch();
+    $profile = $stmt->fetch();
 
-    if ($existing) {
-        jsonResponse([
-            'ok'    => true,
-            'email' => $email,
-            'role'  => $existing['role'] ?? 'user',
-            'isNew' => false,
-        ]);
+    if (!$profile) {
+        jsonResponse(['ok' => false, 'error' => 'Email ou mot de passe incorrect'], 401);
     }
 
-    $db->prepare("INSERT INTO profiles (email, created_at, role) VALUES (?, ?, 'user')")
-       ->execute([$email, date('c')]);
+    if ($profile['account_status'] !== 'active') {
+        jsonResponse(['ok' => false, 'error' => 'Compte désactivé. Contactez votre administrateur.'], 403);
+    }
+
+    if (empty($profile['password_hash'])) {
+        jsonResponse(['ok' => false, 'error' => 'Compte sans mot de passe. Contactez votre administrateur.'], 403);
+    }
+
+    if (!password_verify($password, $profile['password_hash'])) {
+        jsonResponse(['ok' => false, 'error' => 'Email ou mot de passe incorrect'], 401);
+    }
+
+    $_SESSION['email'] = $email;
+    $_SESSION['role'] = $profile['role'];
+    $_SESSION['name'] = explode('@', $email)[0];
 
     jsonResponse([
         'ok'    => true,
         'email' => $email,
-        'role'  => 'user',
-        'isNew' => true,
+        'role'  => $profile['role'],
+        'isNew' => false,
     ]);
 }
 
-// GET /api/profil/{email}
+// POST /api/logout — Déconnexion
+if ($uri === '/api/logout' && $method === 'POST') {
+    $_SESSION = [];
+    session_destroy();
+    jsonResponse(['ok' => true]);
+}
+
+// GET /api/session — Vérifier la session en cours
+if ($uri === '/api/session' && $method === 'GET') {
+    if (!isset($_SESSION['email'])) {
+        jsonResponse(['ok' => false, 'authenticated' => false], 200);
+    }
+
+    $db = getDB();
+    $stmt = $db->prepare("SELECT * FROM profiles WHERE email = ?");
+    $stmt->execute([$_SESSION['email']]);
+    $profile = $stmt->fetch();
+
+    if (!$profile || $profile['account_status'] !== 'active') {
+        $_SESSION = [];
+        session_destroy();
+        jsonResponse(['ok' => false, 'authenticated' => false], 200);
+    }
+
+    $_SESSION['role'] = $profile['role'];
+
+    jsonResponse([
+        'ok' => true,
+        'authenticated' => true,
+        'email' => $profile['email'],
+        'role' => $profile['role'],
+        'isAdmin' => $profile['role'] === 'admin',
+    ]);
+}
+
+// POST /api/invite — Admin crée un compte (admin only)
+if ($uri === '/api/invite' && $method === 'POST') {
+    if (!isset($_SESSION['email']) || $_SESSION['role'] !== 'admin') {
+        jsonResponse(['ok' => false, 'error' => 'Accès réservé aux administrateurs'], 403);
+    }
+
+    $data = jsonInput();
+    $email = trim(strtolower($data['email'] ?? ''));
+    $role = $data['role'] ?? 'user';
+
+    if (!$email || !str_contains($email, '@')) {
+        jsonResponse(['ok' => false, 'error' => 'Email invalide'], 400);
+    }
+    if (!in_array($role, ['user', 'prevention'])) {
+        jsonResponse(['ok' => false, 'error' => 'Rôle invalide'], 400);
+    }
+
+    $db = getDB();
+    $stmt = $db->prepare("SELECT * FROM profiles WHERE email = ?");
+    $stmt->execute([$email]);
+    if ($stmt->fetch()) {
+        jsonResponse(['ok' => false, 'error' => 'Cet email a déjà un compte'], 409);
+    }
+
+    $tempPassword = bin2hex(random_bytes(4)); // 8 caractères
+    $hash = password_hash($tempPassword, PASSWORD_DEFAULT);
+
+    $db->prepare("INSERT INTO profiles (email, password_hash, created_at, role, account_status, created_by) VALUES (?, ?, ?, ?, 'active', ?)")
+       ->execute([$email, $hash, date('c'), $role, $_SESSION['email']]);
+
+    jsonResponse([
+        'ok' => true,
+        'email' => $email,
+        'role' => $role,
+        'temporaryPassword' => $tempPassword,
+    ]);
+}
+
+// POST /api/change-password — Changer son mot de passe
+if ($uri === '/api/change-password' && $method === 'POST') {
+    if (!isset($_SESSION['email'])) {
+        jsonResponse(['ok' => false, 'error' => 'Authentification requise'], 401);
+    }
+
+    $data = jsonInput();
+    $currentPassword = $data['currentPassword'] ?? '';
+    $newPassword = $data['newPassword'] ?? '';
+
+    if (strlen($newPassword) < 6) {
+        jsonResponse(['ok' => false, 'error' => 'Mot de passe : minimum 6 caractères'], 400);
+    }
+
+    $db = getDB();
+    $stmt = $db->prepare("SELECT * FROM profiles WHERE email = ?");
+    $stmt->execute([$_SESSION['email']]);
+    $profile = $stmt->fetch();
+
+    if (!$profile || !password_verify($currentPassword, $profile['password_hash'])) {
+        jsonResponse(['ok' => false, 'error' => 'Mot de passe actuel incorrect'], 403);
+    }
+
+    $hash = password_hash($newPassword, PASSWORD_DEFAULT);
+    $db->prepare("UPDATE profiles SET password_hash = ? WHERE email = ?")
+       ->execute([$hash, $_SESSION['email']]);
+
+    jsonResponse(['ok' => true]);
+}
+
+// GET /api/users — Liste des utilisateurs (admin only)
+if ($uri === '/api/users' && $method === 'GET') {
+    if (!isset($_SESSION['email']) || $_SESSION['role'] !== 'admin') {
+        jsonResponse(['ok' => false, 'error' => 'Accès réservé aux administrateurs'], 403);
+    }
+
+    $db = getDB();
+    $stmt = $db->query("SELECT email, role, account_status, created_at, created_by FROM profiles ORDER BY created_at");
+    $users = $stmt->fetchAll();
+
+    jsonResponse(['ok' => true, 'users' => $users]);
+}
+
+// PUT /api/users/{email}/status — Activer/désactiver un compte (admin only)
+if (preg_match('#^/api/users/([^/]+)/status$#', $uri, $m) && $method === 'PUT') {
+    if (!isset($_SESSION['email']) || $_SESSION['role'] !== 'admin') {
+        jsonResponse(['ok' => false, 'error' => 'Accès réservé aux administrateurs'], 403);
+    }
+
+    $targetEmail = strtolower(urldecode($m[1]));
+    $data = jsonInput();
+    $status = $data['status'] ?? 'active';
+
+    if (!in_array($status, ['active', 'disabled'])) {
+        jsonResponse(['ok' => false, 'error' => 'Statut invalide'], 400);
+    }
+
+    $db = getDB();
+    $db->prepare("UPDATE profiles SET account_status = ? WHERE email = ?")
+       ->execute([$status, $targetEmail]);
+
+    jsonResponse(['ok' => true]);
+}
+
+// GET /api/profil/{email} — Profil utilisateur (session requise)
 if (preg_match('#^/api/profil/([^/]+)$#', $uri, $m) && $method === 'GET') {
+    requireAuth();
     $email = strtolower(urldecode($m[1]));
+
     $db = getDB();
 
     $stmt = $db->prepare("SELECT * FROM profiles WHERE email = ?");
@@ -153,8 +341,11 @@ if (preg_match('#^/api/profil/([^/]+)$#', $uri, $m) && $method === 'GET') {
     ]);
 }
 
-// PUT /api/profil/{email}/role
+// PUT /api/profil/{email}/role — Changer le rôle (admin only)
 if (preg_match('#^/api/profil/([^/]+)/role$#', $uri, $m) && $method === 'PUT') {
+    if (!isset($_SESSION['email']) || $_SESSION['role'] !== 'admin') {
+        jsonResponse(['ok' => false, 'error' => 'Accès réservé aux administrateurs'], 403);
+    }
     $email = strtolower(urldecode($m[1]));
     $data = jsonInput();
     $role = $data['role'] ?? '';
@@ -169,6 +360,9 @@ if (preg_match('#^/api/profil/([^/]+)/role$#', $uri, $m) && $method === 'PUT') {
 
     jsonResponse(['ok' => true]);
 }
+
+// Protection des routes métier — session requise
+requireAuth();
 
 // ========================================
 // CAUSERIES

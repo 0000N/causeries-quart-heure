@@ -19,8 +19,11 @@ function initDB() {
     $db->exec("
         CREATE TABLE IF NOT EXISTS profiles (
             email TEXT PRIMARY KEY,
+            password_hash TEXT NOT NULL DEFAULT '',
             created_at TEXT NOT NULL,
-            role TEXT DEFAULT 'user'
+            role TEXT DEFAULT 'user',
+            account_status TEXT DEFAULT 'active',
+            created_by TEXT
         );
 
         CREATE TABLE IF NOT EXISTS chantiers (
@@ -108,6 +111,23 @@ function initDB() {
             updated_at TEXT NOT NULL
         );
     ");
+
+    // Migrations pour les bases existantes
+    try {
+        $db->exec("ALTER TABLE profiles ADD COLUMN password_hash TEXT NOT NULL DEFAULT ''");
+    } catch (Exception $e) {
+        // La colonne existe déjà
+    }
+    try {
+        $db->exec("ALTER TABLE profiles ADD COLUMN account_status TEXT DEFAULT 'active'");
+    } catch (Exception $e) {
+        // La colonne existe déjà
+    }
+    try {
+        $db->exec("ALTER TABLE profiles ADD COLUMN created_by TEXT");
+    } catch (Exception $e) {
+        // La colonne existe déjà
+    }
 }
 
 function jsonResponse($data, $code = 200) {
@@ -120,4 +140,23 @@ function jsonResponse($data, $code = 200) {
 function jsonInput() {
     $input = file_get_contents('php://input');
     return json_decode($input, true) ?? [];
+}
+
+function generateToken(): string {
+    return bin2hex(random_bytes(32));
+}
+
+function isAdminSession(): bool {
+    return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+}
+
+function requireAuth(): array {
+    if (!isset($_SESSION['email'])) {
+        jsonResponse(['ok' => false, 'error' => 'Authentification requise'], 401);
+    }
+    return [
+        'email' => $_SESSION['email'],
+        'role' => $_SESSION['role'] ?? 'user',
+        'name' => $_SESSION['name'] ?? $_SESSION['email'],
+    ];
 }
