@@ -1,0 +1,16 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/$USER/www/causeries-quart-heure/
+    - # Vider le dossier de destination (sauf vendor et data.db)
+    - /bin/mkdir -p $DEPLOYPATH
+    - # Copier tous les fichiers
+    - /bin/cp -r * $DEPLOYPATH
+    - /bin/cp .htaccess $DEPLOYPATH
+    - # Installer les dépendances PHP
+    - cd $DEPLOYPATH && /usr/local/bin/php8.2 /usr/local/bin/composer install --no-dev --prefer-dist 2>&1
+    - # Créer les dossiers nécessaires
+    - /bin/mkdir -p $DEPLOYPATH/uploads/photos
+    - /bin/chmod 755 $DEPLOYPATH/uploads
+    - /bin/chmod 755 $DEPLOYPATH/uploads/photos
+    - echo "✅ Déploiement terminé le $(date)"
