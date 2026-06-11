@@ -827,15 +827,13 @@ const GUIDES={
         }
       }
     ]
-  },
-  'Autre':{
-    var API = ''; // Same origin
-    var user = null;
-    var userRole = null;
-    var isAdmin = false;
-    var causeries = [];
-    var pCh = [];
-    var pP = [];
+  }
+};
+
+GUIDES['Autre']={label:'Autre',icon:'📋',topics:[]};
+
+var userRole = null;
+var isAdmin = false;
 
     async function api(url, o) {
       return fetch(API + url, {
@@ -2210,6 +2208,7 @@ updateOnlineStatus();
 updatePendingBadge();
 renderGuides();
 
+}
 })();
 
 /* ======= PWA: Enregistrement du Service Worker ======= */
