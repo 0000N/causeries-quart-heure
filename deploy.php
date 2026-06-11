@@ -8,7 +8,7 @@
 
 // === CONFIGURATION ===
 // Changez ce token après déploiement !
-$DEPLOY_TOKEN = 'causeries-deploy-2026';
+$DEPLOY_TOKEN = 'causeries-auto-ad2ad479d6d07c9ebb1da44a';
 
 // === SÉCURITÉ ===
 header('Content-Type: application/json; charset=utf-8');
