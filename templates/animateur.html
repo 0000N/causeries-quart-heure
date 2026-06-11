@@ -212,22 +212,8 @@ textarea.in{resize:vertical;min-height:70px}
   <h2 id="login-title">Causeries 1/4h Sécurité</h2>
   <p id="login-subtitle">Application de gestion des causeries sécurité</p>
 
-  <!-- Formulaire de connexion -->
-  <div id="login-form" class="login-card">
-    <div class="fg">
-      <label class="fl">Email</label>
-      <input type="email" class="in" id="login-email" placeholder="prenom@exemple.fr" inputmode="email" autocomplete="email">
-    </div>
-    <div class="fg">
-      <label class="fl">Mot de passe</label>
-      <input type="password" class="in" id="login-password" placeholder="Votre mot de passe" autocomplete="current-password">
-    </div>
-    <button class="btn btn-primary" onclick="login()">Se connecter</button>
-    <p id="login-error" style="font-size:13px;color:#ef4444;margin-top:8px;text-align:center;display:none"></p>
-  </div>
-
-  <!-- Inscription premier admin -->
-  <div id="register-form" class="login-card" style="display:none">
+  <!-- Inscription premier admin (visible par défaut) -->
+  <div id="register-form" class="login-card">
     <div class="fg">
       <label class="fl">Créer un compte administrateur</label>
       <input type="email" class="in" id="reg-email" placeholder="admin@exemple.fr" inputmode="email" autocomplete="email">
@@ -238,6 +224,20 @@ textarea.in{resize:vertical;min-height:70px}
     </div>
     <button class="btn btn-primary" onclick="register()">Créer mon compte</button>
     <p id="register-error" style="font-size:13px;color:#ef4444;margin-top:8px;text-align:center;display:none"></p>
+  </div>
+
+  <!-- Formulaire de connexion (caché par défaut) -->
+  <div id="login-form" class="login-card" style="display:none">
+    <div class="fg">
+      <label class="fl">Email</label>
+      <input type="email" class="in" id="login-email" placeholder="prenom@exemple.fr" inputmode="email" autocomplete="email">
+    </div>
+    <div class="fg">
+      <label class="fl">Mot de passe</label>
+      <input type="password" class="in" id="login-password" placeholder="Votre mot de passe" autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary" onclick="login()">Se connecter</button>
+    <p id="login-error" style="font-size:13px;color:#ef4444;margin-top:8px;text-align:center;display:none"></p>
   </div>
 
   <!-- Admin panel : gestion des utilisateurs -->
