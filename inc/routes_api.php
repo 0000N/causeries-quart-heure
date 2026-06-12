@@ -382,7 +382,7 @@ if (preg_match('#^/api/causeries/([^/]+)$#', $uri, $m) && $method === 'GET') {
     $stmt = $db->prepare("SELECT role FROM profiles WHERE email = ?");
     $stmt->execute([$email]);
     $profile = $stmt->fetch();
-    $isPrevention = ($profile && $profile['role'] === 'prevention') || isPreventionEmail($email);
+    $isPrevention = ($profile && in_array($profile['role'], ['prevention', 'admin'])) || isPreventionEmail($email);
 
     if ($isPrevention) {
         $rows = $db->query("SELECT * FROM causeries ORDER BY date_iso DESC")->fetchAll();
@@ -472,7 +472,7 @@ if (preg_match('#^/api/causeries/([^/]+)$#', $uri, $m) && $method === 'DELETE') 
     $stmt = $db->prepare("SELECT role FROM profiles WHERE email = ?");
     $stmt->execute([$email]);
     $profile = $stmt->fetch();
-    $isPrevention = ($profile && $profile['role'] === 'prevention') || isPreventionEmail($email);
+    $isPrevention = ($profile && in_array($profile['role'], ['prevention', 'admin'])) || isPreventionEmail($email);
 
     if ($row['email'] !== $email && !$isPrevention) {
         jsonResponse(['ok' => false, 'error' => 'Non autorisé'], 403);

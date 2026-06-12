@@ -1215,7 +1215,7 @@ window.rejectImprovement = rejectImprovement;
 (async function() {
   const resp = await fetch('/api/session', { credentials: 'same-origin' });
   const data = await resp.json();
-  if (data.authenticated && data.role === 'prevention') {
+  if (data.authenticated && (data.role === 'prevention' || data.role === 'admin')) {
     userEmail = data.email;
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('app').style.display = 'flex';

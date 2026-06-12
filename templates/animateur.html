@@ -245,6 +245,7 @@ textarea.in{resize:vertical;min-height:70px}
 
   <!-- Admin panel : gestion des utilisateurs -->
   <div id="admin-panel" style="display:none;margin-top:12px">
+    <button class="btn btn-secondary" onclick="hideAdminPanel()" style="margin-bottom:10px">← Retour</button>
     <div class="card">
       <div class="card-title">👥 Gestion des utilisateurs</div>
       <div id="users-list" style="margin-bottom:10px"></div>
@@ -962,6 +963,8 @@ var isAdmin = false;
     window.logout = logout;
 
     async function showAdminPanel() {
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('app-main').style.display = 'none';
       document.getElementById('admin-panel').style.display = 'block';
       document.getElementById('login-form').style.display = 'none';
       document.getElementById('register-form').style.display = 'none';
@@ -970,6 +973,13 @@ var isAdmin = false;
       await loadUsers();
     }
     window.showAdminPanel = showAdminPanel;
+
+    function hideAdminPanel() {
+      document.getElementById('admin-panel').style.display = 'none';
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app-main').style.display = 'block';
+    }
+    window.hideAdminPanel = hideAdminPanel;
 
     function showLoginForm() {
       document.getElementById('register-form').style.display = 'none';
@@ -1700,8 +1710,8 @@ async function loadProfile(){
     if(r.ok){
       currentRole=r.role||'user';
       var navBtn=document.getElementById('nav-prevention');
-      if(navBtn)navBtn.style.display=currentRole==='prevention'?'':'none';
-      if(currentRole==='prevention'){
+      if(navBtn)navBtn.style.display=(currentRole==='prevention'||currentRole==='admin')?'':'none';
+      if(currentRole==='prevention'||currentRole==='admin'){
         document.querySelector('.header h1').textContent='1/4h Sécurité — Prévention';
       }
     }
