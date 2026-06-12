@@ -86,18 +86,18 @@ if (defined('BASE_PATH') && BASE_PATH && strpos($uri, BASE_PATH) === 0) {
 $query = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY) ?? '';
 parse_str($query, $params);
 
-try {
-
-// ========================================
-// AUTHENTIFICATION
-// ========================================
-
 // Vérifier si un administrateur existe
 function hasAdmin(): bool {
     $db = getDB();
     $stmt = $db->query("SELECT COUNT(*) FROM profiles WHERE role = 'admin'");
     return (int)$stmt->fetchColumn() > 0;
 }
+
+try {
+
+// ========================================
+// AUTHENTIFICATION
+// ========================================
 
 // POST /api/register — Création du premier compte (admin)
 if ($uri === '/api/register' && $method === 'POST') {
@@ -497,6 +497,10 @@ if (preg_match('#^/api/causeries/([^/]+)/resubmit$#', $uri, $m) && $method === '
 
 // GET /api/admin/causeries
 if (($uri === '/api/admin/causeries' || $uri === '/api/all-causeries') && $method === 'GET') {
+    if (!isset($_SESSION['email']) || $_SESSION['role'] !== 'admin') {
+        jsonResponse(['ok' => false, 'error' => 'Accès réservé aux administrateurs'], 403);
+    }
+
     $email = strtolower(trim($params['email'] ?? ''));
     $statusFilter = $params['status'] ?? '';
     $animateurFilter = $params['animateur'] ?? '';
@@ -690,6 +694,10 @@ if (preg_match('#^/api/action-plans/([^/]+)/comments$#', $uri, $m) && $method ==
 
 // GET /api/admin/stats
 if ($uri === '/api/admin/stats' && $method === 'GET') {
+    if (!isset($_SESSION['email']) || $_SESSION['role'] !== 'admin') {
+        jsonResponse(['ok' => false, 'error' => 'Accès réservé aux administrateurs'], 403);
+    }
+
     $email = strtolower(trim($params['email'] ?? ''));
 
     $db = getDB();

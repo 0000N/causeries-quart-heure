@@ -124,6 +124,9 @@ function serveTemplate($name) {
     $inject = "<script>window.BASE_PATH=$basePathJs;</script>\n";
     $html = str_replace('<head>', "<head>\n$inject", $html);
     // Remplacer les chemins absolus /api/ et /static/ par des chemins relatifs au sous-dossier
+    // NOTE: This string replacement on raw HTML is fragile — it could match unintended
+    // occurrences of '/api/ or '/static/ in data, comments, or inline text. A proper
+    // template engine or DOM-aware rewriting would be safer.
     if (BASE_PATH) {
         $html = str_replace("'/api/", "window.BASE_PATH+'/api/", $html);
         $html = str_replace('href="/static/', 'href="' . BASE_PATH . '/static/', $html);
